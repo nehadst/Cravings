@@ -10,4 +10,4 @@ export default function ProfilePage() {
       <ProfileForm />
     </main>
   );
-}
+} 

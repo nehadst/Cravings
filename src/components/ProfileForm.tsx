@@ -72,11 +72,18 @@ export default function ProfileForm() {
         dislikedIngredients: data.dislikedIngredients ? data.dislikedIngredients.split(',').map(item => item.trim()) : [],
       };
       
-      // TODO: Send data to API
-      console.log('Form data:', transformedData);
+      // Send data to API
+      const response = await fetch('/api/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(transformedData),
+      });
       
-      // Simulating API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!response.ok) {
+        throw new Error('Failed to save preferences');
+      }
       
       setSubmitSuccess(true);
     } catch (error) {
