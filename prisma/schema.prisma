@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  email            String   @unique
+  name             String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  preferences      UserPreferences?
+}
+
+model UserPreferences {
+  id                  String   @id @default(uuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Dietary preferences
+  isVegan             Boolean  @default(false)
+  isVegetarian        Boolean  @default(false)
+  isPescatarian       Boolean  @default(false)
+  isKeto              Boolean  @default(false)
+  isPaleo             Boolean  @default(false)
+  isGlutenFree        Boolean  @default(false)
+  isDairyFree         Boolean  @default(false)
+  isNutFree           Boolean  @default(false)
+  isHalal             Boolean  @default(false)
+  isKosher            Boolean  @default(false)
+  isLowCarb           Boolean  @default(false)
+  isLowFat            Boolean  @default(false)
+  
+  // Allergies - stored as array of strings
+  allergies           String[]
+  
+  // Nutritional goals
+  calorieTarget       Int?
+  proteinTarget       Int?
+  carbTarget          Int?
+  fatTarget           Int?
+  
+  // Additional information
+  preferredCuisines   String[]
+  dislikedIngredients String[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+} 
