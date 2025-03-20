@@ -24,7 +24,7 @@ export default function Home() {
         <div className="flex gap-6 items-center flex-col sm:flex-row">
           <Link
             href="/profile"
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-blue-600 text-white gap-2 hover:bg-blue-700 font-medium text-base h-12 px-6 sm:w-auto"
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-blue-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"
           >
             Set Up Your Profile
           </Link>
@@ -57,7 +57,7 @@ export default function Home() {
       </main>
       
       <footer className="flex gap-[24px] flex-wrap items-center justify-center">
-        <p className="text-sm text-gray-500">© 2023 Cravings App. All rights reserved.</p>
+        <p className="text-sm text-gray-500">© 2025 Cravings App. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -96,11 +96,15 @@ export default function ProfileForm() {
   };
   
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-2xl">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-10">
       {/* Dietary Preferences Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Dietary Preferences</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Dietary Preferences</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Select all that apply to your diet</p>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {[
             { id: 'isVegan', label: 'Vegan' },
             { id: 'isVegetarian', label: 'Vegetarian' },
@@ -115,14 +119,17 @@ export default function ProfileForm() {
             { id: 'isLowCarb', label: 'Low-Carb' },
             { id: 'isLowFat', label: 'Low-Fat' },
           ].map(item => (
-            <div key={item.id} className="flex items-center space-x-2">
+            <div 
+              key={item.id} 
+              className="flex items-center space-x-3 p-3 rounded-lg bg-gray-100 border border-gray-200 dark:bg-gray-700 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            >
               <input
                 type="checkbox"
                 id={item.id}
                 {...register(item.id as keyof ProfileFormData)}
-                className="h-4 w-4"
+                className="h-4 w-4 text-gray-800 focus:ring-gray-500 border-gray-300 rounded"
               />
-              <label htmlFor={item.id} className="text-sm font-medium">
+              <label htmlFor={item.id} className="text-sm font-medium text-gray-700 dark:text-gray-200 cursor-pointer">
                 {item.label}
               </label>
             </div>
@@ -131,25 +138,34 @@ export default function ProfileForm() {
       </div>
       
       {/* Allergies Section */}
-      <div className="space-y-2">
-        <label htmlFor="allergies" className="block text-sm font-medium">
-          Allergies (comma separated)
-        </label>
-        <input
-          type="text"
-          id="allergies"
-          {...register('allergies')}
-          placeholder="e.g., peanuts, shellfish, eggs"
-          className="w-full p-2 border rounded-md"
-        />
+      <div className="space-y-4">
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Allergies & Food Sensitivities</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">List any foods you're allergic to or need to avoid</p>
+        </div>
+        
+        <div className="space-y-2">
+          <input
+            type="text"
+            id="allergies"
+            {...register('allergies')}
+            placeholder="e.g., peanuts, shellfish, eggs (separate with commas)"
+            className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+          />
+          <p className="text-xs text-gray-500 dark:text-gray-400">Separate multiple items with commas</p>
+        </div>
       </div>
       
       {/* Nutritional Goals Section */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Nutritional Goals</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Nutritional Goals</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Set your daily nutritional targets</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label htmlFor="calorieTarget" className="block text-sm font-medium">
+            <label htmlFor="calorieTarget" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Daily Calorie Target
             </label>
             <input
@@ -157,11 +173,11 @@ export default function ProfileForm() {
               id="calorieTarget"
               {...register('calorieTarget')}
               placeholder="e.g., 2000"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="proteinTarget" className="block text-sm font-medium">
+            <label htmlFor="proteinTarget" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Daily Protein Target (g)
             </label>
             <input
@@ -169,11 +185,11 @@ export default function ProfileForm() {
               id="proteinTarget"
               {...register('proteinTarget')}
               placeholder="e.g., 120"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="carbTarget" className="block text-sm font-medium">
+            <label htmlFor="carbTarget" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Daily Carb Target (g)
             </label>
             <input
@@ -181,11 +197,11 @@ export default function ProfileForm() {
               id="carbTarget"
               {...register('carbTarget')}
               placeholder="e.g., 200"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="fatTarget" className="block text-sm font-medium">
+            <label htmlFor="fatTarget" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Daily Fat Target (g)
             </label>
             <input
@@ -193,7 +209,7 @@ export default function ProfileForm() {
               id="fatTarget"
               {...register('fatTarget')}
               placeholder="e.g., 65"
-              className="w-full p-2 border rounded-md"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
             />
           </div>
         </div>
@@ -201,46 +217,56 @@ export default function ProfileForm() {
       
       {/* Additional Preferences */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Additional Preferences</h2>
-        <div className="space-y-2">
-          <label htmlFor="preferredCuisines" className="block text-sm font-medium">
-            Preferred Cuisines (comma separated)
-          </label>
-          <input
-            type="text"
-            id="preferredCuisines"
-            {...register('preferredCuisines')}
-            placeholder="e.g., Italian, Mexican, Thai"
-            className="w-full p-2 border rounded-md"
-          />
+        <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Additional Preferences</h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Tell us more about your food preferences</p>
         </div>
-        <div className="space-y-2">
-          <label htmlFor="dislikedIngredients" className="block text-sm font-medium">
-            Disliked Ingredients (comma separated)
-          </label>
-          <input
-            type="text"
-            id="dislikedIngredients"
-            {...register('dislikedIngredients')}
-            placeholder="e.g., cilantro, olives, mushrooms"
-            className="w-full p-2 border rounded-md"
-          />
+        
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <label htmlFor="preferredCuisines" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Preferred Cuisines
+            </label>
+            <input
+              type="text"
+              id="preferredCuisines"
+              {...register('preferredCuisines')}
+              placeholder="e.g., Italian, Mexican, Thai (separate with commas)"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="dislikedIngredients" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Disliked Ingredients
+            </label>
+            <input
+              type="text"
+              id="dislikedIngredients"
+              {...register('dislikedIngredients')}
+              placeholder="e.g., cilantro, olives, mushrooms (separate with commas)"
+              className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            />
+          </div>
         </div>
       </div>
       
       {/* Submit Button */}
-      <div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full md:w-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-blue-300"
-        >
-          {isSubmitting ? 'Saving...' : 'Save Preferences'}
-        </button>
-        
-        {submitSuccess && (
-          <p className="mt-2 text-green-600">Your preferences have been saved!</p>
-        )}
+      <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-6 py-3 bg-blue-800 hover:bg-blue-900 text-white font-medium rounded-lg transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            {isSubmitting ? 'Saving...' : 'Save Preferences'}
+          </button>
+          
+          {submitSuccess && (
+            <p className="text-green-600 dark:text-green-400 font-medium">
+              Your preferences have been saved!
+            </p>
+          )}
+        </div>
       </div>
     </form>
   );
