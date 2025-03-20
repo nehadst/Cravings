@@ -6,8 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
@@ -38,8 +38,8 @@ model UserPreferences {
   isLowCarb           Boolean  @default(false)
   isLowFat            Boolean  @default(false)
   
-  // Allergies - stored as array of strings
-  allergies           String[]
+  // Allergies - stored as comma-separated string
+  allergies           String   @default("")
   
   // Nutritional goals
   calorieTarget       Int?
@@ -48,8 +48,8 @@ model UserPreferences {
   fatTarget           Int?
   
   // Additional information
-  preferredCuisines   String[]
-  dislikedIngredients String[]
+  preferredCuisines   String   @default("")
+  dislikedIngredients String   @default("")
   
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

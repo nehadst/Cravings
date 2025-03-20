@@ -64,12 +64,14 @@ export default function ProfileForm() {
     setSubmitSuccess(false);
     
     try {
-      // Transform string inputs to arrays
+      // No longer need to transform strings to arrays
+      // SQLite stores them as comma-separated strings
       const transformedData = {
         ...data,
-        allergies: data.allergies ? data.allergies.split(',').map(item => item.trim()) : [],
-        preferredCuisines: data.preferredCuisines ? data.preferredCuisines.split(',').map(item => item.trim()) : [],
-        dislikedIngredients: data.dislikedIngredients ? data.dislikedIngredients.split(',').map(item => item.trim()) : [],
+        // Just trim the strings to clean up any extra spaces
+        allergies: data.allergies ? data.allergies.trim() : "",
+        preferredCuisines: data.preferredCuisines ? data.preferredCuisines.trim() : "",
+        dislikedIngredients: data.dislikedIngredients ? data.dislikedIngredients.trim() : "",
       };
       
       // Send data to API
