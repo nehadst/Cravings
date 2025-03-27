@@ -96,7 +96,7 @@ export default function Home() {
       </main>
       
       <footer className="flex gap-[24px] flex-wrap items-center justify-center">
-        <p className="text-sm text-gray-500">© 2023 Cravings App. All rights reserved.</p>
+        <p className="text-sm text-gray-500">© 2025 Cravings App. All rights reserved.</p>
       </footer>
     </div>
   );
