@@ -1,16 +1,38 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from 'next-auth/react';
 
 export default function Home() {
+  const { data: session } = useSession();
+
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="w-full flex justify-end">
-        <Link 
-          href="/profile" 
-          className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
-        >
-          My Profile
-        </Link>
+        {session ? (
+          <Link 
+            href="/profile" 
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
+          >
+            My Profile
+          </Link>
+        ) : (
+          <div className="flex gap-4">
+            <Link 
+              href="/login" 
+              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
+            >
+              Sign In
+            </Link>
+            <Link 
+              href="/register" 
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-800 text-white gap-2 hover:bg-gray-900 font-medium text-sm h-10 px-4"
+            >
+              Sign Up
+            </Link>
+          </div>
+        )}
       </header>
       
       <main className="flex flex-col gap-[32px] items-center text-center max-w-3xl">
@@ -22,12 +44,21 @@ export default function Home() {
         </p>
         
         <div className="flex gap-6 items-center flex-col sm:flex-row">
-          <Link
-            href="/profile"
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-blue-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"
-          >
-            Set Up Your Profile
-          </Link>
+          {session ? (
+            <Link
+              href="/profile"
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"
+            >
+              Set Up Your Profile
+            </Link>
+          ) : (
+            <Link
+              href="/register"
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"
+            >
+              Get Started
+            </Link>
+          )}
           <a
             className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-base h-12 px-6 w-full sm:w-auto"
             href="#features"
@@ -57,7 +88,7 @@ export default function Home() {
       </main>
       
       <footer className="flex gap-[24px] flex-wrap items-center justify-center">
-        <p className="text-sm text-gray-500">© 2025 Cravings App. All rights reserved.</p>
+        <p className="text-sm text-gray-500">© 2023 Cravings App. All rights reserved.</p>
       </footer>
     </div>
   );
