@@ -3,11 +3,35 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import ProfileForm from '@/components/ProfileForm';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function ProfilePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [status, router]);
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black dark:bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-black dark:bg-black">
-      <header className="bg-black shadow">
+      <header className="bg-white dark:bg-gray-800 shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Your Dietary Profile</h1>
           <Link 
@@ -23,7 +47,7 @@ export default function ProfilePage() {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <div className="bg-black rounded-lg shadow p-6 md:p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 md:p-8">
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             Tell us about your dietary preferences and needs so we can provide personalized recipe recommendations.
           </p>
