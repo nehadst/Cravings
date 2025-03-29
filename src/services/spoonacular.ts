@@ -152,6 +152,7 @@ export async function getRecipeDetails(id: number): Promise<Recipe> {
   });
 
   if (!response.ok) {
+    console.error('API Error:', response.status, response.statusText);
     throw new Error('Failed to fetch recipe details');
   }
 
