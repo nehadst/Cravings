@@ -1,47 +1,50 @@
-const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 const BASE_URL = 'https://api.spoonacular.com/recipes';
+
+interface SpoonacularSearchResponse {
+  offset: number;
+  number: number;
+  results: Recipe[];
+  totalResults: number;
+}
 
 export interface Recipe {
   id: number;
   title: string;
   image: string;
   imageType: string;
-  usedIngredientCount: number;
-  missedIngredientCount: number;
-  missedIngredients: Ingredient[];
-  usedIngredients: Ingredient[];
-  unusedIngredients: Ingredient[];
-  likes: number;
-}
-
-interface Ingredient {
-  id: number;
-  amount: number;
-  unit: string;
-  unitLong: string;
-  unitShort: string;
-  aisle: string;
-  name: string;
-  original: string;
-  originalName: string;
-  meta: string[];
-  image: string;
-}
-
-export interface RecipeDetails {
-  id: number;
-  title: string;
-  image: string;
-  servings: number;
   readyInMinutes: number;
+  servings: number;
   sourceUrl: string;
+  sourceName: string;
   summary: string;
   instructions: string;
   extendedIngredients: ExtendedIngredient[];
-  diets: string[];
   cuisines: string[];
   dishTypes: string[];
-  nutrition: Nutrition;
+  diets: string[];
+  occasions: string[];
+  vegetarian: boolean;
+  vegan: boolean;
+  glutenFree: boolean;
+  dairyFree: boolean;
+  veryHealthy: boolean;
+  cheap: boolean;
+  veryPopular: boolean;
+  sustainable: boolean;
+  lowFodmap: boolean;
+  weightWatcherSmartPoints: number;
+  gaps: string;
+  preparationMinutes: number | null;
+  cookingMinutes: number | null;
+  aggregateLikes: number;
+  healthScore: number;
+  creditsText: string;
+  license: string | null;
+  pricePerServing: number;
+  analyzedInstructions: any[];
+  originalId: number | null;
+  spoonacularScore: number;
+  spoonacularSourceUrl: string;
 }
 
 interface ExtendedIngredient {
@@ -68,71 +71,88 @@ interface Measure {
   unitLong: string;
 }
 
-interface Nutrition {
-  nutrients: Nutrient[];
+export interface UserPreferences {
+  dietaryPreferences: string[];
+  allergies: string[];
+  nutritionalGoals: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+  };
+  cuisines: string[];
+  dislikedIngredients: string[];
 }
 
-interface Nutrient {
-  name: string;
-  amount: number;
-  unit: string;
-  percentOfDailyNeeds: number;
-}
-
-export async function searchRecipes(query: string, preferences?: {
-  diet?: string[];
-  intolerances?: string[];
-  cuisine?: string[];
-  type?: string;
-  maxReadyTime?: number;
-  minCalories?: number;
-  maxCalories?: number;
-}): Promise<Recipe[]> {
+export async function searchRecipes(query: string, preferences?: any): Promise<Recipe[]> {
   const params = new URLSearchParams({
-    apiKey: SPOONACULAR_API_KEY!,
     query,
     number: '10',
     addRecipeInformation: 'true',
-    ...(preferences?.diet && { diet: preferences.diet.join(',') }),
-    ...(preferences?.intolerances && { intolerances: preferences.intolerances.join(',') }),
-    ...(preferences?.cuisine && { cuisine: preferences.cuisine.join(',') }),
-    ...(preferences?.type && { type: preferences.type }),
-    ...(preferences?.maxReadyTime && { maxReadyTime: preferences.maxReadyTime.toString() }),
-    ...(preferences?.minCalories && { minCalories: preferences.minCalories.toString() }),
-    ...(preferences?.maxCalories && { maxCalories: preferences.maxCalories.toString() }),
+    addRecipeInstructions: 'true',
+    ...(preferences?.dietaryPreferences?.length && { diet: preferences.dietaryPreferences.join(',') }),
+    ...(preferences?.allergies?.length && { intolerances: preferences.allergies.join(',') }),
+    ...(preferences?.cuisines?.length && { cuisine: preferences.cuisines.join(',') }),
   });
 
-  const response = await fetch(`${BASE_URL}/complexSearch?${params}`);
+  console.log('Search URL:', `${BASE_URL}/complexSearch?${params}`);
+  console.log('API Key:', process.env.SPOONACULAR_API_KEY ? 'Present' : 'Missing');
+
+  const response = await fetch(`${BASE_URL}/complexSearch?${params}`, {
+    headers: {
+      'x-api-key': process.env.SPOONACULAR_API_KEY || '',
+    },
+  });
+
   if (!response.ok) {
     throw new Error('Failed to fetch recipes');
   }
 
-  const data = await response.json();
+  const data: SpoonacularSearchResponse = await response.json();
+  console.log('API Response:', data);
+  console.log('Number of results:', data.results?.length || 0);
+  
+  if (!data.results || data.results.length === 0) {
+    console.log('No results found in response');
+    return [];
+  }
+
   return data.results;
 }
 
-export async function getRecipeDetails(id: number): Promise<RecipeDetails> {
+export async function getRandomRecipes(count: number = 5, preferences?: any): Promise<Recipe[]> {
   const params = new URLSearchParams({
-    apiKey: SPOONACULAR_API_KEY!,
-  });
-
-  const response = await fetch(`${BASE_URL}/${id}/information?${params}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch recipe details');
-  }
-
-  return response.json();
-}
-
-export async function getRandomRecipes(count: number = 5): Promise<Recipe[]> {
-  const params = new URLSearchParams({
-    apiKey: SPOONACULAR_API_KEY!,
     number: count.toString(),
+    addRecipeInformation: 'true',
+    addRecipeInstructions: 'true',
+    ...(preferences?.dietaryPreferences?.length && { diet: preferences.dietaryPreferences.join(',') }),
+    ...(preferences?.allergies?.length && { intolerances: preferences.allergies.join(',') }),
+    ...(preferences?.cuisines?.length && { cuisine: preferences.cuisines.join(',') }),
   });
 
-  const response = await fetch(`${BASE_URL}/random?${params}`);
+  const response = await fetch(`${BASE_URL}/random?${params}`, {
+    headers: {
+      'x-api-key': process.env.SPOONACULAR_API_KEY || '',
+    },
+  });
+
   if (!response.ok) {
     throw new Error('Failed to fetch random recipes');
+  }
+
+  const data = await response.json();
+  return Array.isArray(data) ? data : data.recipes;
+}
+
+export async function getRecipeDetails(id: number): Promise<Recipe> {
+  const response = await fetch(`${BASE_URL}/${id}/information`, {
+    headers: {
+      'x-api-key': process.env.SPOONACULAR_API_KEY || '',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch recipe details');
   }
 
   return response.json();

@@ -10,6 +10,12 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="w-full flex justify-end">
+        <Link
+          href="/recipes"
+          className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+        >
+          Recipes
+        </Link>
         {session ? (
           <>
             <Link 

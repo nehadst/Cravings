@@ -2,65 +2,78 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Recipe, searchRecipes, getRandomRecipes } from '@/services/spoonacular';
+import { Recipe } from '@/services/spoonacular';
 import RecipeCard from '@/components/RecipeCard';
 
 export default function RecipesPage() {
   const { data: session } = useSession();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [preferences, setPreferences] = useState<any>(null);
 
   useEffect(() => {
-    loadInitialRecipes();
-  }, []);
+    const fetchPreferences = async () => {
+      if (!session?.user?.email) return;
 
-  const loadInitialRecipes = async () => {
-    try {
-      const randomRecipes = await getRandomRecipes(10);
-      setRecipes(randomRecipes);
-    } catch (err) {
-      setError('Failed to load recipes');
-    } finally {
-      setLoading(false);
-    }
-  };
+      try {
+        const response = await fetch('/api/preferences');
+        if (!response.ok) throw new Error('Failed to fetch preferences');
+        const data = await response.json();
+        setPreferences(data);
+      } catch (err) {
+        console.error('Error fetching preferences:', err);
+      }
+    };
+
+    fetchPreferences();
+  }, [session]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
 
     setLoading(true);
+    setError(null);
     try {
-      const searchResults = await searchRecipes(searchQuery);
-      setRecipes(searchResults);
+      const params = new URLSearchParams({
+        query: searchQuery,
+        ...(preferences && { preferences: JSON.stringify(preferences) }),
+      });
+      
+      const response = await fetch(`/api/recipes?${params}`);
+      if (!response.ok) throw new Error('Failed to search recipes');
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid response format');
+      }
+
+      setRecipes(data);
     } catch (err) {
-      setError('Failed to search recipes');
+      setError(err instanceof Error ? err.message : 'Failed to search recipes');
     } finally {
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400">Loading recipes...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Recipe Recommendations
+            Recipe Search
           </h1>
+          {preferences && (
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              Search will be filtered based on your preferences
+            </p>
+          )}
           <form onSubmit={handleSearch} className="max-w-md mx-auto">
             <div className="flex gap-2">
               <input
@@ -72,9 +85,10 @@ export default function RecipesPage() {
               />
               <button
                 type="submit"
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                disabled={loading || !searchQuery.trim()}
+                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Search
+                {loading ? 'Searching...' : 'Search'}
               </button>
             </div>
           </form>
@@ -83,6 +97,18 @@ export default function RecipesPage() {
         {error && (
           <div className="text-center text-red-600 dark:text-red-400 mb-8">
             {error}
+          </div>
+        )}
+
+        {!loading && !error && recipes.length === 0 && searchQuery && (
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            No recipes found. Try a different search term.
+          </div>
+        )}
+
+        {!loading && !error && recipes.length === 0 && !searchQuery && (
+          <div className="text-center text-gray-500 dark:text-gray-400">
+            Enter a search term to find recipes.
           </div>
         )}
 

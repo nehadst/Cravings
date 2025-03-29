@@ -1,0 +1,2185 @@
+Search Recipes
+Search through thousands of recipes using advanced filtering and ranking. NOTE: This method combines searching by query, by ingredients, and by nutrients into one endpoint.
+
+If you are making a "what's in your fridge?" style app and require more filters than the Search Recipes by Ingredients endpoint allows, use the sort parameters max-used-ingredients or min-missing-ingredients with this endpoint instead.
+
+GET https://api.spoonacular.com/recipes/complexSearch
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+query	string	pasta	The (natural language) recipe search query.
+cuisine	string	italian	The cuisine(s) of the recipes. One or more, comma separated (will be interpreted as 'OR'). See a full list of supported cuisines.
+excludeCuisine	string	greek	The cuisine(s) the recipes must not match. One or more, comma separated (will be interpreted as 'AND'). See a full list of supported cuisines.
+diet	string	vegetarian	The diet(s) for which the recipes must be suitable. You can specify multiple with comma meaning AND connection. You can specify multiple diets separated with a pipe | meaning OR connection. For example diet=gluten free,vegetarian means the recipes must be both, gluten free and vegetarian. If you specify diet=vegan|vegetarian, it means you want recipes that are vegan OR vegetarian. See a full list of supported diets.
+intolerances	string	gluten	A comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered. See a full list of supported intolerances.
+equipment	string	pan	The equipment required. Multiple values will be interpreted as 'or'. For example, value could be "blender, frying pan, bowl".See a full list of supported equipment.
+includeIngredients	string	tomato,cheese	A comma-separated list of ingredients that should/must be used in the recipes.
+excludeIngredients	string	eggs	A comma-separated list of ingredients or ingredient types that the recipes must not contain.
+type	string	main course	The type of recipe. See a full list of supported meal types.
+instructionsRequired	boolean	true	Whether the recipes must have instructions.
+fillIngredients	boolean	false	Add information about the ingredients and whether they are used or missing in relation to the query.
+addRecipeInformation	boolean	false	If set to true, you get more information about the recipes returned.
+addRecipeInstructions	boolean	false	If set to true, you get analyzed instructions for each recipe returned.
+addRecipeNutrition	boolean	false	If set to true, you get nutritional information about each recipes returned.
+author	string	coffeebean	The username of the recipe author.
+tags	string	myCustomTag	User defined tags that have to match. The author param has to be set.
+recipeBoxId	number	2468	The id of the recipe box to which the search should be limited to.
+titleMatch	string	Crock Pot	Enter text that must be found in the title of the recipes.
+maxReadyTime	number	20	The maximum time in minutes it should take to prepare and cook the recipe.
+minServings	number	1	The minimum amount of servings the recipe is for.
+maxServings	number	8	The maximum amount of servings the recipe is for.
+ignorePantry	boolean	true	Whether to ignore typical pantry items, such as water, salt, flour, etc.
+sort	string	calories	The strategy to sort recipes by. See a full list of supported sorting options.
+sortDirection	string	asc	The direction in which to sort. Must be either 'asc' (ascending) or 'desc' (descending).
+minCarbs	number	10	The minimum amount of carbohydrates in grams the recipe must have per serving.
+maxCarbs	number	100	The maximum amount of carbohydrates in grams the recipe can have per serving.
+minProtein	number	10	The minimum amount of protein in grams the recipe must have per serving.
+maxProtein	number	100	The maximum amount of protein in grams the recipe can have per serving.
+minCalories	number	50	The minimum amount of calories the recipe must have per serving.
+maxCalories	number	800	The maximum amount of calories the recipe can have per serving.
+minFat	number	1	The minimum amount of fat in grams the recipe must have per serving.
+maxFat	number	100	The maximum amount of fat in grams the recipe can have per serving.
+minAlcohol	number	0	The minimum amount of alcohol in grams the recipe must have per serving.
+maxAlcohol	number	100	The maximum amount of alcohol in grams the recipe can have per serving.
+minCaffeine	number	0	The minimum amount of caffeine in milligrams the recipe must have per serving.
+maxCaffeine	number	100	The maximum amount of caffeine in milligrams the recipe can have per serving.
+minCopper	number	0	The minimum amount of copper in milligrams the recipe must have per serving.
+maxCopper	number	100	The maximum amount of copper in milligrams the recipe can have per serving.
+minCalcium	number	0	The minimum amount of calcium in milligrams the recipe must have per serving.
+maxCalcium	number	100	The maximum amount of calcium in milligrams the recipe can have per serving.
+minCholine	number	0	The minimum amount of choline in milligrams the recipe must have per serving.
+maxCholine	number	100	The maximum amount of choline in milligrams the recipe can have per serving.
+minCholesterol	number	0	The minimum amount of cholesterol in milligrams the recipe must have per serving.
+maxCholesterol	number	100	The maximum amount of cholesterol in milligrams the recipe can have per serving.
+minFluoride	number	0	The minimum amount of fluoride in milligrams the recipe must have per serving.
+maxFluoride	number	100	The maximum amount of fluoride in milligrams the recipe can have per serving.
+minSaturatedFat	number	0	The minimum amount of saturated fat in grams the recipe must have per serving.
+maxSaturatedFat	number	100	The maximum amount of saturated fat in grams the recipe can have per serving.
+minVitaminA	number	0	The minimum amount of Vitamin A in IU the recipe must have per serving.
+maxVitaminA	number	100	The maximum amount of Vitamin A in IU the recipe can have per serving.
+minVitaminC	number	0	The minimum amount of Vitamin C milligrams the recipe must have per serving.
+maxVitaminC	number	100	The maximum amount of Vitamin C in milligrams the recipe can have per serving.
+minVitaminD	number	0	The minimum amount of Vitamin D in micrograms the recipe must have per serving.
+maxVitaminD	number	100	The maximum amount of Vitamin D in micrograms the recipe can have per serving.
+minVitaminE	number	0	The minimum amount of Vitamin E in milligrams the recipe must have per serving.
+maxVitaminE	number	100	The maximum amount of Vitamin E in milligrams the recipe can have per serving.
+minVitaminK	number	0	The minimum amount of Vitamin K in micrograms the recipe must have per serving.
+maxVitaminK	number	100	The maximum amount of Vitamin K in micrograms the recipe can have per serving.
+minVitaminB1	number	0	The minimum amount of Vitamin B1 in milligrams the recipe must have per serving.
+maxVitaminB1	number	100	The maximum amount of Vitamin B1 in milligrams the recipe can have per serving.
+minVitaminB2	number	0	The minimum amount of Vitamin B2 in milligrams the recipe must have per serving.
+maxVitaminB2	number	100	The maximum amount of Vitamin B2 in milligrams the recipe can have per serving.
+minVitaminB5	number	0	The minimum amount of Vitamin B5 in milligrams the recipe must have per serving.
+maxVitaminB5	number	100	The maximum amount of Vitamin B5 in milligrams the recipe can have per serving.
+minVitaminB3	number	0	The minimum amount of Vitamin B3 in milligrams the recipe must have per serving.
+maxVitaminB3	number	100	The maximum amount of Vitamin B3 in milligrams the recipe can have per serving.
+minVitaminB6	number	0	The minimum amount of Vitamin B6 in milligrams the recipe must have per serving.
+maxVitaminB6	number	100	The maximum amount of Vitamin B6 in milligrams the recipe can have per serving.
+minVitaminB12	number	0	The minimum amount of Vitamin B12 in micrograms the recipe must have per serving.
+maxVitaminB12	number	100	The maximum amount of Vitamin B12 in micrograms the recipe can have per serving.
+minFiber	number	0	The minimum amount of fiber in grams the recipe must have per serving.
+maxFiber	number	100	The maximum amount of fiber in grams the recipe can have per serving.
+minFolate	number	0	The minimum amount of folate in micrograms the recipe must have per serving.
+maxFolate	number	100	The maximum amount of folate in micrograms the recipe can have per serving.
+minFolicAcid	number	0	The minimum amount of folic acid in micrograms the recipe must have per serving.
+maxFolicAcid	number	100	The maximum amount of folic acid in micrograms the recipe can have per serving.
+minIodine	number	0	The minimum amount of iodine in micrograms the recipe must have per serving.
+maxIodine	number	100	The maximum amount of iodine in micrograms the recipe can have per serving.
+minIron	number	0	The minimum amount of iron in milligrams the recipe must have per serving.
+maxIron	number	100	The maximum amount of iron in milligrams the recipe can have per serving.
+minMagnesium	number	0	The minimum amount of magnesium in milligrams the recipe must have per serving.
+maxMagnesium	number	100	The maximum amount of magnesium in milligrams the recipe can have per serving.
+minManganese	number	0	The minimum amount of manganese in milligrams the recipe must have per serving.
+maxManganese	number	100	The maximum amount of manganese in milligrams the recipe can have per serving.
+minPhosphorus	number	0	The minimum amount of phosphorus in milligrams the recipe must have per serving.
+maxPhosphorus	number	100	The maximum amount of phosphorus in milligrams the recipe can have per serving.
+minPotassium	number	0	The minimum amount of potassium in milligrams the recipe must have per serving.
+maxPotassium	number	100	The maximum amount of potassium in milligrams the recipe can have per serving.
+minSelenium	number	0	The minimum amount of selenium in micrograms the recipe must have per serving.
+maxSelenium	number	100	The maximum amount of selenium in micrograms the recipe can have per serving.
+minSodium	number	0	The minimum amount of sodium in milligrams the recipe must have per serving.
+maxSodium	number	100	The maximum amount of sodium in milligrams the recipe can have per serving.
+minSugar	number	0	The minimum amount of sugar in grams the recipe must have per serving.
+maxSugar	number	100	The maximum amount of sugar in grams the recipe can have per serving.
+minZinc	number	0	The minimum amount of zinc in milligrams the recipe must have per serving.
+maxZinc	number	100	The maximum amount of zinc in milligrams the recipe can have per serving.
+offset	number	0	The number of results to skip (between 0 and 900).
+number	number	10	The number of expected results (between 1 and 100).
+Example Request and Response
+GET https://api.spoonacular.com/recipes/complexSearch?query=pasta&maxFat=25&number=2
+{
+    "offset": 0,
+    "number": 2,
+    "results": [
+        {
+            "id": 716429,
+            "title": "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
+            "image": "https://img.spoonacular.com/recipes/716429-312x231.jpg",
+            "imageType": "jpg",
+        },
+        {
+            "id": 715538,
+            "title": "What to make for dinner tonight?? Bruschetta Style Pork & Pasta",
+            "image": "https://img.spoonacular.com/recipes/715538-312x231.jpg",
+            "imageType": "jpg",
+        }
+    ],
+    "totalResults": 86
+}
+The API response will give you arrays of usedIngredients, missedIngredients, and unusedIngredients for each returned recipe. This diagram shows you what they mean:
+
+
+
+Quotas
+Calling this endpoint requires 1 point and 0.01 points per result returned. Since this endpoint combines the capabilities of four different endpoints into one, additional points may be required depending on the parameters you set. If fillIngredients is set to true, 0.025 points will be added per recipe returned. If a nutrient filter is set, 1 point will be added. If addRecipeInformation is set to true, 0.025 points will be added per recipe returned. If addRecipeInstructions is set to true, 0.025 points will be added per recipe returned. If addRecipeNutrition is set to true, 0.025 points will be added per recipe returned and addRecipeInformation will automatically be set to true as well. Learn more about quotas.
+
+
+
+
+Search Recipes by Nutrients
+Find a set of recipes that adhere to the given nutritional limits. You may set limits for macronutrients (calories, protein, fat, and carbohydrate) and/or many micronutrients.
+
+GET https://api.spoonacular.com/recipes/findByNutrients
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+minCarbs	number	10	The minimum amount of carbohydrates in grams the recipe must have per serving.
+maxCarbs	number	100	The maximum amount of carbohydrates in grams the recipe can have per serving.
+minProtein	number	10	The minimum amount of protein in grams the recipe must have per serving.
+maxProtein	number	100	The maximum amount of protein in grams the recipe can have per serving.
+minCalories	number	50	The minimum amount of calories the recipe must have per serving.
+maxCalories	number	800	The maximum amount of calories the recipe can have per serving.
+minFat	number	1	The minimum amount of fat in grams the recipe must have per serving.
+maxFat	number	100	The maximum amount of fat in grams the recipe can have per serving.
+minAlcohol	number	0	The minimum amount of alcohol in grams the recipe must have per serving.
+maxAlcohol	number	100	The maximum amount of alcohol in grams the recipe can have per serving.
+minCaffeine	number	0	The minimum amount of caffeine in milligrams the recipe must have per serving.
+maxCaffeine	number	100	The maximum amount of caffeine in milligrams the recipe can have per serving.
+minCopper	number	0	The minimum amount of copper in milligrams the recipe must have per serving.
+maxCopper	number	100	The maximum amount of copper in milligrams the recipe can have per serving.
+minCalcium	number	0	The minimum amount of calcium in milligrams the recipe must have per serving.
+maxCalcium	number	100	The maximum amount of calcium in milligrams the recipe can have per serving.
+minCholine	number	0	The minimum amount of choline in milligrams the recipe must have per serving.
+maxCholine	number	100	The maximum amount of choline in milligrams the recipe can have per serving.
+minCholesterol	number	0	The minimum amount of cholesterol in milligrams the recipe must have per serving.
+maxCholesterol	number	100	The maximum amount of cholesterol in milligrams the recipe can have per serving.
+minFluoride	number	0	The minimum amount of fluoride in milligrams the recipe must have per serving.
+maxFluoride	number	100	The maximum amount of fluoride in milligrams the recipe can have per serving.
+minSaturatedFat	number	0	The minimum amount of saturated fat in grams the recipe must have per serving.
+maxSaturatedFat	number	100	The maximum amount of saturated fat in grams the recipe can have per serving.
+minVitaminA	number	0	The minimum amount of Vitamin A in IU the recipe must have per serving.
+maxVitaminA	number	100	The maximum amount of Vitamin A in IU the recipe can have per serving.
+minVitaminC	number	0	The minimum amount of Vitamin C in milligrams the recipe must have per serving.
+maxVitaminC	number	100	The maximum amount of Vitamin C in milligrams the recipe can have per serving.
+minVitaminD	number	0	The minimum amount of Vitamin D in micrograms the recipe must have per serving.
+maxVitaminD	number	100	The maximum amount of Vitamin D in micrograms the recipe can have per serving.
+minVitaminE	number	0	The minimum amount of Vitamin E in milligrams the recipe must have per serving.
+maxVitaminE	number	100	The maximum amount of Vitamin E in milligrams the recipe can have per serving.
+minVitaminK	number	0	The minimum amount of Vitamin K in micrograms the recipe must have per serving.
+maxVitaminK	number	100	The maximum amount of Vitamin K in micrograms the recipe can have per serving.
+minVitaminB1	number	0	The minimum amount of Vitamin B1 in milligrams the recipe must have per serving.
+maxVitaminB1	number	100	The maximum amount of Vitamin B1 in milligrams the recipe can have per serving.
+minVitaminB2	number	0	The minimum amount of Vitamin B2 in milligrams the recipe must have per serving.
+maxVitaminB2	number	100	The maximum amount of Vitamin B2 in milligrams the recipe can have per serving.
+minVitaminB5	number	0	The minimum amount of Vitamin B5 in milligrams the recipe must have per serving.
+maxVitaminB5	number	100	The maximum amount of Vitamin B5 in milligrams the recipe can have per serving.
+minVitaminB3	number	0	The minimum amount of Vitamin B3 in milligrams the recipe must have per serving.
+maxVitaminB3	number	100	The maximum amount of Vitamin B3 in milligrams the recipe can have per serving.
+minVitaminB6	number	0	The minimum amount of Vitamin B6 in milligrams the recipe must have per serving.
+maxVitaminB6	number	100	The maximum amount of Vitamin B6 in milligrams the recipe can have per serving.
+minVitaminB12	number	0	The minimum amount of Vitamin B12 in micrograms the recipe must have per serving.
+maxVitaminB12	number	100	The maximum amount of Vitamin B12 in micrograms the recipe can have per serving.
+minFiber	number	0	The minimum amount of fiber in grams the recipe must have per serving.
+maxFiber	number	100	The maximum amount of fiber in grams the recipe can have per serving.
+minFolate	number	0	The minimum amount of folate in micrograms the recipe must have per serving.
+maxFolate	number	100	The maximum amount of folate in micrograms the recipe can have per serving.
+minFolicAcid	number	0	The minimum amount of folic acid in micrograms the recipe must have per serving.
+maxFolicAcid	number	100	The maximum amount of folic acid in micrograms the recipe can have per serving.
+minIodine	number	0	The minimum amount of iodine in micrograms the recipe must have per serving.
+maxIodine	number	100	The maximum amount of iodine in micrograms the recipe can have per serving.
+minIron	number	0	The minimum amount of iron in milligrams the recipe must have per serving.
+maxIron	number	100	The maximum amount of iron in milligrams the recipe can have per serving.
+minMagnesium	number	0	The minimum amount of magnesium in milligrams the recipe must have per serving.
+maxMagnesium	number	100	The maximum amount of magnesium in milligrams the recipe can have per serving.
+minManganese	number	0	The minimum amount of manganese in milligrams the recipe must have per serving.
+maxManganese	number	100	The maximum amount of manganese in milligrams the recipe can have per serving.
+minPhosphorus	number	0	The minimum amount of phosphorus in milligrams the recipe must have per serving.
+maxPhosphorus	number	100	The maximum amount of phosphorus in milligrams the recipe can have per serving.
+minPotassium	number	0	The minimum amount of potassium in milligrams the recipe must have per serving.
+maxPotassium	number	100	The maximum amount of potassium in milligrams the recipe can have per serving.
+minSelenium	number	0	The minimum amount of selenium in micrograms the recipe must have per serving.
+maxSelenium	number	100	The maximum amount of selenium in micrograms the recipe can have per serving.
+minSodium	number	0	The minimum amount of sodium in milligrams the recipe must have per serving.
+maxSodium	number	100	The maximum amount of sodium in milligrams the recipe can have per serving.
+minSugar	number	0	The minimum amount of sugar in grams the recipe must have per serving.
+maxSugar	number	100	The maximum amount of sugar in grams the recipe can have per serving.
+minZinc	number	0	The minimum amount of zinc in milligrams the recipe must have per serving.
+maxZinc	number	100	The maximum amount of zinc in milligrams the recipe can have per serving.
+offset	number	0	The number of results to skip (between 0 and 900).
+number	number	10	The number of expected results (between 1 and 100).
+random	boolean	false	If true, every request will give you a random set of recipes within the requested limits.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/findByNutrients?minCarbs=10&maxCarbs=50&number=2
+[
+    {
+        "calories": 210,
+        "carbs": "43g",
+        "fat": "3g",
+        "id": 90629,
+        "image": "https://img.spoonacular.com/recipes/90629-312x231.jpg",
+        "imageType": "jpg",
+        "protein": "1g",
+        "title": "Baked Apples in White Wine"
+    },
+    {
+        "calories": 226,
+        "carbs": "33g",
+        "fat": "10g",
+        "id": 284420,
+        "image": "https://img.spoonacular.com/recipes/284420-312x231.jpg",
+        "imageType": "jpg",
+        "protein": "2g",
+        "title": "Chocolate Silk Pie with Marshmallow Meringue"
+    }
+]
+Quotas
+Calling this endpoint requires 1 point and 0.01 points per recipe returned. Learn more about quotas.
+
+
+Search Recipes by Ingredients
+Ever wondered what recipes you can cook with the ingredients you have in your fridge or pantry? This endpoint lets you find recipes that either maximize the usage of ingredients you have at hand (pre shopping) or minimize the ingredients that you don't currently have (post shopping).
+
+Find recipes that use as many of the given ingredients as possible and require as few additional ingredients as possible. This is a "what's in your fridge" API endpoint.
+
+GET https://api.spoonacular.com/recipes/findByIngredients
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+ingredients	string	apples,flour,sugar	A comma-separated list of ingredients that the recipes should contain.
+number	number	10	The maximum number of recipes to return (between 1 and 100). Defaults to 10.
+ranking	number	1	Whether to maximize used ingredients (1) or minimize missing ingredients (2) first.
+ignorePantry	boolean	true	Whether to ignore typical pantry items, such as water, salt, flour, etc.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/findByIngredients?ingredients=apples,+flour,+sugar&number=2
+[
+    {
+        "id": 73420,
+        "image": "https://img.spoonacular.com/recipes/73420-312x231.jpg",
+        "imageType": "jpg",
+        "likes": 0,
+        "missedIngredientCount": 3,
+        "missedIngredients": [
+            {
+                "aisle": "Baking",
+                "amount": 1.0,
+                "id": 18371,
+                "image": "https://img.spoonacular.com/ingredients_100x100/white-powder.jpg",
+                "meta": [],
+                "name": "baking powder",
+                "original": "1 tsp baking powder",
+                "originalName": "baking powder",
+                "unit": "tsp",
+                "unitLong": "teaspoon",
+                "unitShort": "tsp"
+            },
+            {
+                "aisle": "Spices and Seasonings",
+                "amount": 1.0,
+                "id": 2010,
+                "image": "https://img.spoonacular.com/ingredients_100x100/cinnamon.jpg",
+                "meta": [],
+                "name": "cinnamon",
+                "original": "1 tsp cinnamon",
+                "originalName": "cinnamon",
+                "unit": "tsp",
+                "unitLong": "teaspoon",
+                "unitShort": "tsp"
+            },
+            {
+                "aisle": "Milk, Eggs, Other Dairy",
+                "amount": 1.0,
+                "id": 1123,
+                "image": "https://img.spoonacular.com/ingredients_100x100/egg.png",
+                "meta": [],
+                "name": "egg",
+                "original": "1 egg",
+                "originalName": "egg",
+                "unit": "",
+                "unitLong": "",
+                "unitShort": ""
+            }
+        ],
+        "title": "Apple Or Peach Strudel",
+        "unusedIngredients": [],
+        "usedIngredientCount": 1,
+        "usedIngredients": [
+            {
+                "aisle": "Produce",
+                "amount": 6.0,
+                "id": 9003,
+                "image": "https://img.spoonacular.com/ingredients_100x100/apple.jpg",
+                "meta": [],
+                "name": "apples",
+                "original": "6 large baking apples",
+                "originalName": "baking apples",
+                "unit": "large",
+                "unitLong": "larges",
+                "unitShort": "large"
+            }
+        ]
+    },
+    {
+        "id": 632660,
+        "image": "https://img.spoonacular.com/recipes/632660-312x231.jpg",
+        "imageType": "jpg",
+        "likes": 3,
+        "missedIngredientCount": 4,
+        "missedIngredients": [
+            {
+                "aisle": "Milk, Eggs, Other Dairy",
+                "amount": 1.5,
+                "extendedName": "unsalted butter",
+                "id": 1001,
+                "image": "https://img.spoonacular.com/ingredients_100x100/butter-sliced.jpg",
+                "meta": [
+                    "unsalted",
+                    "cold"
+                ],
+                "name": "butter",
+                "original": "1 1/2 sticks cold unsalted butter cold unsalted butter<",
+                "originalName": "cold unsalted butter cold unsalted butter<",
+                "unit": "sticks",
+                "unitLong": "sticks",
+                "unitShort": "sticks"
+            },
+            {
+                "aisle": "Produce",
+                "amount": 4.0,
+                "id": 1079003,
+                "image": "https://img.spoonacular.com/ingredients_100x100/red-delicious-apples.png",
+                "meta": [
+                    "red",
+                    " such as golden delicious, peeled, cored and cut into 1/4-inch-thick slices "
+                ],
+                "name": "red apples",
+                "original": "4 larges red apples, such as Golden Delicious, peeled, cored and cut into 1/4-inch-thick slices",
+                "originalName": "s red apples, such as Golden Delicious, peeled, cored and cut into 1/4-inch-thick slices",
+                "unit": "large",
+                "unitLong": "larges",
+                "unitShort": "large"
+            },
+            {
+                "aisle": "Spices and Seasonings",
+                "amount": 2.0,
+                "id": 2010,
+                "image": "https://img.spoonacular.com/ingredients_100x100/cinnamon.jpg",
+                "meta": [],
+                "name": "cinnamon",
+                "original": "2 teaspoons cinnamon",
+                "originalName": "cinnamon",
+                "unit": "teaspoons",
+                "unitLong": "teaspoons",
+                "unitShort": "tsp"
+            },
+            {
+                "aisle": "Nut butters, Jams, and Honey",
+                "amount": 2.0,
+                "id": 19719,
+                "image": "https://img.spoonacular.com/ingredients_100x100/apricot-jam.jpg",
+                "meta": [
+                    "melted"
+                ],
+                "name": "apricot preserves",
+                "original": "2 tablespoons apricot preserves, melted and strained",
+                "originalName": "apricot preserves, melted and strained",
+                "unit": "tablespoons",
+                "unitLong": "tablespoons",
+                "unitShort": "Tbsp"
+            }
+        ],
+        "title": "Apricot Glazed Apple Tart",
+        "unusedIngredients": [
+            {
+                "aisle": "Produce",
+                "amount": 1.0,
+                "id": 9003,
+                "image": "https://img.spoonacular.com/ingredients_100x100/apple.jpg",
+                "meta": [],
+                "name": "apples",
+                "original": "apples",
+                "originalName": "apples",
+                "unit": "serving",
+                "unitLong": "serving",
+                "unitShort": "serving"
+            }
+        ],
+        "usedIngredientCount": 0,
+        "usedIngredients": []
+    }
+]
+If you need more filter options, consider using the recipe search and set the sort parameter to max-used-ingredients or min-missing-ingredients.
+
+The API response will give you arrays of usedIngredients, missedIngredients, and unusedIngredients for each returned recipe. This diagram shows you what they mean:
+
+
+
+Quotas
+Calling this endpoint requires 1 point and 0.01 points per recipe returned. Learn more about quotas.
+
+
+Get Recipe Information
+Use a recipe id to get full information about a recipe, such as ingredients, nutrition, diet and allergen information, etc.
+
+GET https://api.spoonacular.com/recipes/{id}/information
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	716429	The id of the recipe.
+includeNutrition	boolean	false	Include nutrition data in the recipe information. Nutrition data is per serving. If you want the nutrition data for the entire recipe, just multiply by the number of servings.
+addWinePairing	boolean	false	Add a wine pairing to the recipe.
+addTasteData	boolean	false	Add taste data to the recipe.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/716429/information?includeNutrition=false
+{
+    "id": 716429,
+    "title": "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs",
+    "image": "https://img.spoonacular.com/recipes/716429-556x370.jpg",
+    "imageType": "jpg",
+    "servings": 2,
+    "readyInMinutes": 45,
+    "cookingMinutes": 25,
+    "preparationMinutes": 20,
+    "license": "CC BY-SA 3.0",
+    "sourceName": "Full Belly Sisters",
+    "sourceUrl": "http://fullbellysisters.blogspot.com/2012/06/pasta-with-garlic-scallions-cauliflower.html",
+    "spoonacularSourceUrl": "https://spoonacular.com/pasta-with-garlic-scallions-cauliflower-breadcrumbs-716429",
+    "healthScore": 19.0,
+    "spoonacularScore": 83.0,
+    "pricePerServing": 163.15,
+    "analyzedInstructions": [],
+    "cheap": false,
+    "creditsText": "Full Belly Sisters",
+    "cuisines": [],
+    "dairyFree": false,
+    "diets": [],
+    "gaps": "no",
+    "glutenFree": false,
+    "instructions": "",
+    "ketogenic": false,
+    "lowFodmap": false,
+    "occasions": [],
+    "sustainable": false,
+    "vegan": false,
+    "vegetarian": false,
+    "veryHealthy": false,
+    "veryPopular": false,
+    "whole30": false,
+    "weightWatcherSmartPoints": 17,
+    "dishTypes": [
+        "lunch",
+        "main course",
+        "main dish",
+        "dinner"
+    ],
+    "extendedIngredients": [
+        {
+            "aisle": "Milk, Eggs, Other Dairy",
+            "amount": 1.0,
+            "consistency": "solid",
+            "id": 1001,
+            "image": "butter-sliced.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 1.0,
+                    "unitLong": "Tbsp",
+                    "unitShort": "Tbsp"
+                },
+                "us": {
+                    "amount": 1.0,
+                    "unitLong": "Tbsp",
+                    "unitShort": "Tbsp"
+                }
+            },
+            "meta": [],
+            "name": "butter",
+            "original": "1 tbsp butter",
+            "originalName": "butter",
+            "unit": "tbsp"
+        },
+        {
+            "aisle": "Produce",
+            "amount": 2.0,
+            "consistency": "solid",
+            "id": 10011135,
+            "image": "cauliflower.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 473.176,
+                    "unitLong": "milliliters",
+                    "unitShort": "ml"
+                },
+                "us": {
+                    "amount": 2.0,
+                    "unitLong": "cups",
+                    "unitShort": "cups"
+                }
+            },
+            "meta": [
+                "frozen",
+                "thawed",
+                "cut into bite-sized pieces"
+            ],
+            "name": "cauliflower florets",
+            "original": "about 2 cups frozen cauliflower florets, thawed, cut into bite-sized pieces",
+            "originalName": "about frozen cauliflower florets, thawed, cut into bite-sized pieces",
+            "unit": "cups"
+        },
+        {
+            "aisle": "Cheese",
+            "amount": 2.0,
+            "consistency": "solid",
+            "id": 1041009,
+            "image": "cheddar-cheese.png",
+            "measures": {
+                "metric": {
+                    "amount": 2.0,
+                    "unitLong": "Tbsps",
+                    "unitShort": "Tbsps"
+                },
+                "us": {
+                    "amount": 2.0,
+                    "unitLong": "Tbsps",
+                    "unitShort": "Tbsps"
+                }
+            },
+            "meta": [
+                "grated",
+                "(I used romano)"
+            ],
+            "name": "cheese",
+            "original": "2 tbsp grated cheese (I used romano)",
+            "originalName": "grated cheese (I used romano)",
+            "unit": "tbsp"
+        },
+        {
+            "aisle": "Oil, Vinegar, Salad Dressing",
+            "amount": 1.0,
+            "consistency": "liquid",
+            "id": 1034053,
+            "image": "olive-oil.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 1.0,
+                    "unitLong": "Tbsp",
+                    "unitShort": "Tbsp"
+                },
+                "us": {
+                    "amount": 1.0,
+                    "unitLong": "Tbsp",
+                    "unitShort": "Tbsp"
+                }
+            },
+            "meta": [],
+            "name": "extra virgin olive oil",
+            "original": "1-2 tbsp extra virgin olive oil",
+            "originalName": "extra virgin olive oil",
+            "unit": "tbsp"
+        },
+        {
+            "aisle": "Produce",
+            "amount": 5.0,
+            "consistency": "solid",
+            "id": 11215,
+            "image": "garlic.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 5.0,
+                    "unitLong": "cloves",
+                    "unitShort": "cloves"
+                },
+                "us": {
+                    "amount": 5.0,
+                    "unitLong": "cloves",
+                    "unitShort": "cloves"
+                }
+            },
+            "meta": [],
+            "name": "garlic",
+            "original": "5-6 cloves garlic",
+            "originalName": "garlic",
+            "unit": "cloves"
+        },
+        {
+            "aisle": "Pasta and Rice",
+            "amount": 6.0,
+            "consistency": "solid",
+            "id": 20420,
+            "image": "fusilli.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 170.097,
+                    "unitLong": "grams",
+                    "unitShort": "g"
+                },
+                "us": {
+                    "amount": 6.0,
+                    "unitLong": "ounces",
+                    "unitShort": "oz"
+                }
+            },
+            "meta": [
+                "(I used linguine)"
+            ],
+            "name": "pasta",
+            "original": "6-8 ounces pasta (I used linguine)",
+            "originalName": "pasta (I used linguine)",
+            "unit": "ounces"
+        },
+        {
+            "aisle": "Spices and Seasonings",
+            "amount": 2.0,
+            "consistency": "solid",
+            "id": 1032009,
+            "image": "red-pepper-flakes.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 2.0,
+                    "unitLong": "pinches",
+                    "unitShort": "pinches"
+                },
+                "us": {
+                    "amount": 2.0,
+                    "unitLong": "pinches",
+                    "unitShort": "pinches"
+                }
+            },
+            "meta": [
+                "red"
+            ],
+            "name": "red pepper flakes",
+            "original": "couple of pinches red pepper flakes, optional",
+            "originalName": "couple of red pepper flakes, optional",
+            "unit": "pinches"
+        },
+        {
+            "aisle": "Spices and Seasonings",
+            "amount": 2.0,
+            "consistency": "solid",
+            "id": 1102047,
+            "image": "salt-and-pepper.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 2.0,
+                    "unitLong": "servings",
+                    "unitShort": "servings"
+                },
+                "us": {
+                    "amount": 2.0,
+                    "unitLong": "servings",
+                    "unitShort": "servings"
+                }
+            },
+            "meta": [
+                "to taste"
+            ],
+            "name": "salt and pepper",
+            "original": "salt and pepper, to taste",
+            "originalName": "salt and pepper, to taste",
+            "unit": "servings"
+        },
+        {
+            "aisle": "Produce",
+            "amount": 3.0,
+            "consistency": "solid",
+            "id": 11291,
+            "image": "spring-onions.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 3.0,
+                    "unitLong": "",
+                    "unitShort": ""
+                },
+                "us": {
+                    "amount": 3.0,
+                    "unitLong": "",
+                    "unitShort": ""
+                }
+            },
+            "meta": [
+                "white",
+                "green",
+                "separated",
+                "chopped"
+            ],
+            "name": "scallions",
+            "original": "3 scallions, chopped, white and green parts separated",
+            "originalName": "scallions, chopped, white and green parts separated",
+            "unit": ""
+        },
+        {
+            "aisle": "Alcoholic Beverages",
+            "amount": 2.0,
+            "consistency": "liquid",
+            "id": 14106,
+            "image": "white-wine.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 2.0,
+                    "unitLong": "Tbsps",
+                    "unitShort": "Tbsps"
+                },
+                "us": {
+                    "amount": 2.0,
+                    "unitLong": "Tbsps",
+                    "unitShort": "Tbsps"
+                }
+            },
+            "meta": [
+                "white"
+            ],
+            "name": "white wine",
+            "original": "2-3 tbsp white wine",
+            "originalName": "white wine",
+            "unit": "tbsp"
+        },
+        {
+            "aisle": "Pasta and Rice",
+            "amount": 0.25,
+            "consistency": "solid",
+            "id": 99025,
+            "image": "breadcrumbs.jpg",
+            "measures": {
+                "metric": {
+                    "amount": 59.147,
+                    "unitLong": "milliliters",
+                    "unitShort": "ml"
+                },
+                "us": {
+                    "amount": 0.25,
+                    "unitLong": "cups",
+                    "unitShort": "cups"
+                }
+            },
+            "meta": [
+                "whole wheat",
+                "(I used panko)"
+            ],
+            "name": "whole wheat bread crumbs",
+            "original": "1/4 cup whole wheat bread crumbs (I used panko)",
+            "originalName": "whole wheat bread crumbs (I used panko)",
+            "unit": "cup"
+        }
+    ],
+    "summary": "Pasta with Garlic, Scallions, Cauliflower & Breadcrumbs might be a good recipe to expand your main course repertoire. One portion of this dish contains approximately <b>19g of protein </b>,  <b>20g of fat </b>, and a total of  <b>584 calories </b>. For  <b>$1.63 per serving </b>, this recipe  <b>covers 23% </b> of your daily requirements of vitamins and minerals. This recipe serves 2. It is brought to you by fullbellysisters.blogspot.com. 209 people were glad they tried this recipe. A mixture of scallions, salt and pepper, white wine, and a handful of other ingredients are all it takes to make this recipe so scrumptious. From preparation to the plate, this recipe takes approximately  <b>45 minutes </b>. All things considered, we decided this recipe  <b>deserves a spoonacular score of 83% </b>. This score is awesome. If you like this recipe, take a look at these similar recipes: <a href=\"https://spoonacular.com/recipes/cauliflower-gratin-with-garlic-breadcrumbs-318375\">Cauliflower Gratin with Garlic Breadcrumbs</a>, < href=\"https://spoonacular.com/recipes/pasta-with-cauliflower-sausage-breadcrumbs-30437\">Pasta With Cauliflower, Sausage, & Breadcrumbs</a>, and <a href=\"https://spoonacular.com/recipes/pasta-with-roasted-cauliflower-parsley-and-breadcrumbs-30738\">Pasta With Roasted Cauliflower, Parsley, And Breadcrumbs</a>.",
+    "winePairing": {
+        "pairedWines": [
+            "chardonnay",
+            "gruener veltliner",
+            "sauvignon blanc"
+        ],
+        "pairingText": "Chardonnay, Gruener Veltliner, and Sauvignon Blanc are great choices for Pasta. Sauvignon Blanc and Gruner Veltliner both have herby notes that complement salads with enough acid to match tart vinaigrettes, while a Chardonnay can be a good pick for creamy salad dressings. The Buddha Kat Winery Chardonnay with a 4 out of 5 star rating seems like a good match. It costs about 25 dollars per bottle.",
+        "productMatches": [
+            {
+                "id": 469199,
+                "title": "Buddha Kat Winery Chardonnay",
+                "description": "We barrel ferment our Chardonnay and age it in a mix of Oak and Stainless. Giving this light bodied wine modest oak character, a delicate floral aroma, and a warming finish.",
+                "price": "$25.0",
+                "imageUrl": "https://img.spoonacular.com/products/469199-312x231.jpg",
+                "averageRating": 0.8,
+                "ratingCount": 1.0,
+                "score": 0.55,
+                "link": "https://www.amazon.com/2015-Buddha-Kat-Winery-Chardonnay/dp/B00OSAVVM4?tag=spoonacular-20"
+            }
+        ]
+    }
+}
+Quotas
+Calling this endpoint requires 1 point and 0.1 points if includeNutrition is true + 1 point if addWinePairing is true and + 0.5 points if addTasteData is true.. Learn more about quotas.
+
+
+Get Recipe Information Bulk
+Get information about multiple recipes at once. This is equivalent to calling the Get Recipe Information endpoint multiple times, but faster.
+
+GET https://api.spoonacular.com/recipes/informationBulk
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+ids	string	715538,716429	A comma-separated list of recipe ids.
+includeNutrition	boolean	false	Include nutrition data to the recipe information. Nutrition data is per serving. If you want the nutrition data for the entire recipe, just multiply by the number of servings.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/informationBulk?ids=715538,716429
+[
+    {/* recipe data as in Get Recipe Information endpoint */},
+    {/* recipe data as in Get Recipe Information endpoint */}
+]
+Quotas
+Calling this endpoint requires 1 point for the first recipe and 0.5 points for every additional recipe returned. Learn more about quotas.
+
+Get Similar Recipes
+Find recipes which are similar to the given one.
+
+GET https://api.spoonacular.com/recipes/{id}/similar
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	715538	The id of the source recipe for which similar recipes should be found.
+number	number	1	The number of random recipes to be returned (between 1 and 100).
+Example Request and Response
+GET https://api.spoonacular.com/recipes/715538/similar
+[
+    {
+        "id": 209128,
+        "title": "Dinner Tonight: Grilled Romesco-Style Pork",
+        "imageType": "jpg",
+        "readyInMinutes": 45,
+        "servings": 4,
+        "sourceUrl": "http://www.seriouseats.com/recipes/2008/07/grilled-romesco-style-pork-salad-recipe.html"
+    },
+    {
+        "id": 31868,
+        "title": "Dinner Tonight: Chickpea Bruschetta",
+        "imageType": "jpg",
+        "readyInMinutes": 45,
+        "servings": 2,
+        "sourceUrl": "http://www.seriouseats.com/recipes/2009/06/dinner-tonight-chickpea-bruschetta-babbo-nyc-recipe.html"
+    }
+]
+Quotas
+Calling this endpoint requires 1 point and 0.01 points per recipe returned. Learn more about quotas.
+
+Ingredients by ID
+Get a recipe's ingredient list.
+
+GET https://api.spoonacular.com/recipes/{id}/ingredientWidget.json
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	1003464	The recipe id.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/1003464/ingredientWidget.json
+{
+    "ingredients": [
+        {
+            "amount": {
+                "metric": {
+                    "unit": "g",
+                    "value": 222.0
+                },
+                "us": {
+                    "unit": "cups",
+                    "value": 1.5
+                }
+            },
+            "image": "blueberries.jpg",
+            "name": "blueberries"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "",
+                    "value": 1.0
+                },
+                "us": {
+                    "unit": "",
+                    "value": 1.0
+                }
+            },
+            "image": "egg-white.jpg",
+            "name": "egg white"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "Tbsps",
+                    "value": 2.0
+                },
+                "us": {
+                    "unit": "Tbsps",
+                    "value": 2.0
+                }
+            },
+            "image": "flour.png",
+            "name": "flour"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "g",
+                    "value": 150.0
+                },
+                "us": {
+                    "unit": "cup",
+                    "value": 0.75
+                }
+            },
+            "image": "sugar-in-bowl.png",
+            "name": "granulated sugar"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "tsp",
+                    "value": 1.0
+                },
+                "us": {
+                    "unit": "tsp",
+                    "value": 1.0
+                }
+            },
+            "image": "lemon-juice.jpg",
+            "name": "fresh lemon juice"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "pinch",
+                    "value": 1.0
+                },
+                "us": {
+                    "unit": "pinch",
+                    "value": 1.0
+                }
+            },
+            "image": "ground-nutmeg.jpg",
+            "name": "nutmeg"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "",
+                    "value": 2.0
+                },
+                "us": {
+                    "unit": "",
+                    "value": 2.0
+                }
+            },
+            "image": "pie-crust.jpg",
+            "name": "pie dough round"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "Tbsps",
+                    "value": 2.0
+                },
+                "us": {
+                    "unit": "Tbsps",
+                    "value": 2.0
+                }
+            },
+            "image": "tapioca-pearls.png",
+            "name": "quick cooking tapioca"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "g",
+                    "value": 305.0
+                },
+                "us": {
+                    "unit": "cups",
+                    "value": 2.5
+                }
+            },
+            "image": "rhubarb.jpg",
+            "name": "trimmed rhubarb"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "tsps",
+                    "value": 0.333
+                },
+                "us": {
+                    "unit": "tsps",
+                    "value": 0.333
+                }
+            },
+            "image": "salt.jpg",
+            "name": "salt"
+        },
+        {
+            "amount": {
+                "metric": {
+                    "unit": "Tbsps",
+                    "value": 0.5
+                },
+                "us": {
+                    "unit": "Tbsps",
+                    "value": 0.5
+                }
+            },
+            "image": "butter-sliced.jpg",
+            "name": "unsalted butter"
+        }
+    ]
+}
+Quotas
+Calling this endpoint requires 1 point. Learn more about quotas.
+
+
+Nutrition by ID
+Get a recipe's nutrition widget data.
+
+GET https://api.spoonacular.com/recipes/{id}/nutritionWidget.json
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	1003464	The recipe id.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/1003464/nutritionWidget.json
+{
+    "nutrients": [
+        {
+            "name": "Calories",
+            "amount": 316.49,
+            "unit": "kcal",
+            "percentOfDailyNeeds": 15.82
+        },
+        {
+            "name": "Fat",
+            "amount": 12.09,
+            "unit": "g",
+            "percentOfDailyNeeds": 18.6
+        },
+        {
+            "name": "Saturated Fat",
+            "amount": 3.98,
+            "unit": "g",
+            "percentOfDailyNeeds": 24.88
+        },
+        {
+            "name": "Carbohydrates",
+            "amount": 49.25,
+            "unit": "g",
+            "percentOfDailyNeeds": 16.42
+        },
+        {
+            "name": "Net Carbohydrates",
+            "amount": 46.76,
+            "unit": "g",
+            "percentOfDailyNeeds": 17.0
+        },
+        {
+            "name": "Sugar",
+            "amount": 21.98,
+            "unit": "g",
+            "percentOfDailyNeeds": 24.42
+        },
+        {
+            "name": "Cholesterol",
+            "amount": 1.88,
+            "unit": "mg",
+            "percentOfDailyNeeds": 0.63
+        },
+        {
+            "name": "Sodium",
+            "amount": 279.1,
+            "unit": "mg",
+            "percentOfDailyNeeds": 12.13
+        },
+        {
+            "name": "Protein",
+            "amount": 3.79,
+            "unit": "g",
+            "percentOfDailyNeeds": 7.57
+        },
+       ...
+    ],
+    "properties": [
+        {
+            "name": "Glycemic Index",
+            "amount": 33.51,
+            "unit": ""
+        },
+        {
+            "name": "Glycemic Load",
+            "amount": 15.63,
+            "unit": ""
+        },
+        {
+            "name": "Nutrition Score",
+            "amount": 5.868695652173913,
+            "unit": "%"
+        }
+    ],
+    "flavonoids": [
+        {
+            "name": "Cyanidin",
+            "amount": 2.35,
+            "unit": "mg"
+        },
+        {
+            "name": "Petunidin",
+            "amount": 8.75,
+            "unit": "mg"
+        },
+        {
+            "name": "Delphinidin",
+            "amount": 9.83,
+            "unit": "mg"
+        },
+       ...
+    ],
+    "ingredients": [
+        {
+            "id": 9050,
+            "name": "blueberries",
+            "amount": 0.19,
+            "unit": "cups",
+            "nutrients": [
+                {
+                    "name": "Vitamin E",
+                    "amount": 0.16,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 3.19
+                },
+                {
+                    "name": "Zinc",
+                    "amount": 0.04,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 1.96
+                },
+                {
+                    "name": "Fat",
+                    "amount": 0.09,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 18.6
+                },
+                {
+                    "name": "Folate",
+                    "amount": 1.66,
+                    "unit": "µg",
+                    "percentOfDailyNeeds": 9.48
+                },
+                {
+                    "name": "Phosphorus",
+                    "amount": 3.33,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 4.24
+                },
+                {
+                    "name": "Manganese",
+                    "amount": 0.09,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 18.69
+                },
+                ...
+        },
+        ...
+    ],
+    "caloricBreakdown": {
+        "percentProtein": 4.72,
+        "percentFat": 33.9,
+        "percentCarbs": 61.38
+    },
+    "weightPerServing": {
+        "amount": 138,
+        "unit": "g"
+    }
+}
+Quotas
+Calling this endpoint requires 1 point. Learn more about quotas.
+
+Get Analyzed Recipe Instructions
+Get an analyzed breakdown of a recipe's instructions. Each step is enriched with the ingredients and equipment required.
+
+GET https://api.spoonacular.com/recipes/{id}/analyzedInstructions
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	324694	The recipe id.
+stepBreakdown	boolean	true	Whether to break down the recipe steps even more.
+Example Request and Response
+GET https://api.spoonacular.com/recipes/324694/analyzedInstructions
+[
+    {
+        "name": "",
+        "steps": [
+            {
+                "equipment": [
+                    {
+                        "id": 404784,
+                        "image": "oven.jpg",
+                        "name": "oven",
+                        "temperature": {
+                            "number": 200.0,
+                            "unit": "Fahrenheit"
+                        }
+                    }
+                ],
+                "ingredients": [],
+                "number": 1,
+                "step": "Preheat the oven to 200 degrees F."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404661,
+                        "image": "whisk.png",
+                        "name": "whisk"
+                    },
+                    {
+                        "id": 404783,
+                        "image": "bowl.jpg",
+                        "name": "bowl"
+                    }
+                ],
+                "ingredients": [
+                    {
+                        "id": 19334,
+                        "image": "light-brown-sugar.jpg",
+                        "name": "light brown sugar"
+                    },
+                    {
+                        "id": 19335,
+                        "image": "sugar-in-bowl.png",
+                        "name": "granulated sugar"
+                    },
+                    {
+                        "id": 18371,
+                        "image": "white-powder.jpg",
+                        "name": "baking powder"
+                    },
+                    {
+                        "id": 18372,
+                        "image": "white-powder.jpg",
+                        "name": "baking soda"
+                    },
+                    {
+                        "id": 12142,
+                        "image": "pecans.jpg",
+                        "name": "pecans"
+                    },
+                    {
+                        "id": 20081,
+                        "image": "flour.png",
+                        "name": "all purpose flour"
+                    },
+                    {
+                        "id": 2047,
+                        "image": "salt.jpg",
+                        "name": "salt"
+                    }
+                ],
+                "number": 2,
+                "step": "Whisk together the flour, pecans, granulated sugar, light brown sugar, baking powder, baking soda, and salt in a medium bowl."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404661,
+                        "image": "whisk.png",
+                        "name": "whisk"
+                    },
+                    {
+                        "id": 404783,
+                        "image": "bowl.jpg",
+                        "name": "bowl"
+                    }
+                ],
+                "ingredients": [
+                    {
+                        "id": 2050,
+                        "image": "vanilla-extract.jpg",
+                        "name": "vanilla extract"
+                    },
+                    {
+                        "id": 93622,
+                        "image": "vanilla.jpg",
+                        "name": "vanilla bean"
+                    },
+                    {
+                        "id": 1230,
+                        "image": "buttermilk.jpg",
+                        "name": "buttermilk"
+                    },
+                    {
+                        "id": 1123,
+                        "image": "egg.png",
+                        "name": "egg"
+                    }
+                ],
+                "number": 3,
+                "step": "Whisk together the eggs, buttermilk, butter and vanilla extract and vanilla bean in a small bowl."
+            },
+            {
+                "equipment": [],
+                "ingredients": [
+                    {
+                        "id": 1123,
+                        "image": "egg.png",
+                        "name": "egg"
+                    }
+                ],
+                "number": 4,
+                "step": "Add the egg mixture to the dry mixture and gently mix to combine. Do not overmix."
+            },
+            {
+                "equipment": [],
+                "ingredients": [],
+                "length": {
+                    "number": 15,
+                    "unit": "minutes"
+                },
+                "number": 5,
+                "step": "Let the batter sit at room temperature for at least 15 minutes and up to 30 minutes before using."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404779,
+                        "image": "griddle.jpg",
+                        "name": "griddle"
+                    },
+                    {
+                        "id": 404645,
+                        "image": "pan.png",
+                        "name": "frying pan"
+                    }
+                ],
+                "ingredients": [],
+                "length": {
+                    "number": 3,
+                    "unit": "minutes"
+                },
+                "number": 6,
+                "step": "Heat a cast iron or nonstick griddle pan over medium heat and brush with melted butter. Once the butter begins to sizzle, use 2 tablespoons of the batter for each pancake and cook until the bubbles appear on the surface and the bottom is golden brown, about 2 minutes, flip over and cook until the bottom is golden brown, 1 to 2 minutes longer."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404784,
+                        "image": "oven.jpg",
+                        "name": "oven",
+                        "temperature": {
+                            "number": 200.0,
+                            "unit": "Fahrenheit"
+                        }
+                    }
+                ],
+                "ingredients": [],
+                "number": 7,
+                "step": "Transfer the pancakes to a platter and keep warm in a 200 degree F oven."
+            },
+            {
+                "equipment": [],
+                "ingredients": [
+                    {
+                        "id": 10014037,
+                        "image": "bourbon.png",
+                        "name": "bourbon"
+                    }
+                ],
+                "number": 8,
+                "step": "Serve 6 pancakes per person, top each with some of the bourbon butter."
+            },
+            {
+                "equipment": [],
+                "ingredients": [
+                    {
+                        "id": 19336,
+                        "image": "powdered-sugar.jpg",
+                        "name": "powdered sugar"
+                    },
+                    {
+                        "id": 19911,
+                        "image": "maple-syrup.png",
+                        "name": "maple syrup"
+                    }
+                ],
+                "number": 9,
+                "step": "Drizzle with warm maple syrup and dust with confectioners' sugar."
+            },
+            {
+                "equipment": [],
+                "ingredients": [
+                    {
+                        "id": 12142,
+                        "image": "pecans.jpg",
+                        "name": "pecans"
+                    }
+                ],
+                "number": 10,
+                "step": "Garnish with fresh mint sprigs and more toasted pecans, if desired."
+            }
+        ]
+    },
+    {
+        "name": "Bourbon Molasses Butter",
+        "steps": [
+            {
+                "equipment": [
+                    {
+                        "id": 404669,
+                        "image": "sauce-pan.jpg",
+                        "name": "sauce pan"
+                    }
+                ],
+                "ingredients": [
+                    {
+                        "id": 10014037,
+                        "image": "bourbon.png",
+                        "name": "bourbon"
+                    },
+                    {
+                        "id": 19335,
+                        "image": "sugar-in-bowl.png",
+                        "name": "sugar"
+                    }
+                ],
+                "number": 1,
+                "step": "Combine the bourbon and sugar in a small saucepan and cook over high heat until reduced to 3 tablespoons, remove and let cool."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404771,
+                        "image": "food-processor.png",
+                        "name": "food processor"
+                    }
+                ],
+                "ingredients": [
+                    {
+                        "id": 19304,
+                        "image": "molasses.jpg",
+                        "name": "molasses"
+                    },
+                    {
+                        "id": 10014037,
+                        "image": "bourbon.png",
+                        "name": "bourbon"
+                    },
+                    {
+                        "id": 2047,
+                        "image": "salt.jpg",
+                        "name": "salt"
+                    }
+                ],
+                "number": 2,
+                "step": "Put the butter, molasses, salt and cooled bourbon mixture in a food processor and process until smooth."
+            },
+            {
+                "equipment": [
+                    {
+                        "id": 404730,
+                        "image": "plastic-wrap.jpg",
+                        "name": "plastic wrap"
+                    },
+                    {
+                        "id": 404783,
+                        "image": "bowl.jpg",
+                        "name": "bowl"
+                    }
+                ],
+                "ingredients": [],
+                "number": 3,
+                "step": "Scrape into a bowl, cover with plastic wrap and refrigerate for at least 1 hour to allow the flavors to meld."
+            },
+            {
+                "equipment": [],
+                "ingredients": [],
+                "length": {
+                    "number": 30,
+                    "unit": "minutes"
+                },
+                "number": 4,
+                "step": "Remove from the refrigerator about 30 minutes before using to soften."
+            }
+        ]
+    }
+]
+Quotas
+Calling this endpoint requires 1 point. Learn more about quotas.
+
+
+Classify Cuisine
+Classify the recipe's cuisine.
+
+POST https://api.spoonacular.com/recipes/cuisine
+Headers
+Request Headers:
+
+Content-Type: application/x-www-form-urlencoded
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+title	string	Pork roast with green beans	The title of the recipe.
+ingredientList	string	3 oz pork shoulder	The ingredient list of the recipe, one ingredient per line (separate lines with \n).
+language	string	en	The input language, either "en" or "de".
+Example Request and Response
+POST https://api.spoonacular.com/recipes/cuisine
+{
+    "cuisine": "Mediterranean",
+    "cuisines": [
+        "Mediterranean",
+        "European",
+        "Italian"
+    ],
+    "confidence": 0.0
+}
+Quotas
+Calling this endpoint requires 0.1 points. Learn more about quotas.
+
+Ingredient Search
+Search for simple whole foods (e.g. fruits, vegetables, nuts, grains, meat, fish, dairy etc.).
+
+GET https://api.spoonacular.com/food/ingredients/search
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+query	string	apple	The partial or full ingredient name.
+addChildren	boolean	true	Whether to add children of found foods.
+minProteinPercent	number	10	The minimum percentage of protein the food must have (between 0 and 100).
+maxProteinPercent	number	90	The maximum percentage of protein the food can have (between 0 and 100).
+minFatPercent	number	10	The minimum percentage of fat the food must have (between 0 and 100).
+maxFatPercent	number	90	The maximum percentage of fat the food can have (between 0 and 100).
+minCarbsPercent	number	10	The minimum percentage of carbs the food must have (between 0 and 100).
+maxCarbsPercent	number	90	The maximum percentage of carbs the food can have (between 0 and 100).
+metaInformation	boolean	false	Whether to return more meta information about the ingredients.
+intolerances	string	egg	A comma-separated list of intolerances. All recipes returned must not contain ingredients that are not suitable for people with the intolerances entered. See a full list of supported intolerances.
+sort	string	calories	The strategy to sort ingredients by. You can sort by any nutrient listed here.
+sortDirection	string	asc	The direction in which to sort. Must be either 'asc' (ascending) or 'desc' (descending).
+language	text	en	Language code, either "en" or "de".
+offset	number	0	The number of results to skip (between 0 and 990).
+number	number	10	The number of expected results (between 1 and 100).
+Example Request and Response
+GET https://api.spoonacular.com/food/ingredients/search?query=banana&number=2&sort=calories&sortDirection=desc
+{
+    "results": [
+        {
+            "id": 19400,
+            "name": "banana chips",
+            "image": "banana-chips.jpg"
+        },
+        {
+            "id": 93779,
+            "name": "banana liqueur",
+            "image": "limoncello.jpg"
+        }
+    ],
+    "offset": 0,
+    "number": 2,
+    "totalResults": 13
+}
+Quotas
+Calling this endpoint requires 1 point and 0.01 points per result if metaInformation is set to true. Learn more about quotas.
+
+Get Ingredient Information
+Use an ingredient id to get all available information about an ingredient, such as its image and supermarket aisle.
+
+GET https://api.spoonacular.com/food/ingredients/{id}/information
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	9266	The ingredient id.
+amount	number	150	The amount of this ingredient.
+unit	string	grams	The unit for the given amount.
+locale	string	en_US	The display name of the returned category, supported is en_US (for American English) and en_GB (for British English).
+Example Request and Response
+GET https://api.spoonacular.com/food/ingredients/9266/information?amount=1
+{
+    "id": 9266,
+    "original": "pineapples",
+    "originalName": "pineapples",
+    "name": "pineapples",
+    "amount": 1.0,
+    "unit": "",
+    "unitShort": "",
+    "unitLong": "",
+    "possibleUnits": [
+        "piece",
+        "slice",
+        "fruit",
+        "g",
+        "oz",
+        "cup",
+        "serving"
+    ],
+    "estimatedCost": {
+        "value": 299.0,
+        "unit": "US Cents"
+    },
+    "consistency": "solid",
+    "shoppingListUnits": [
+        "pieces"
+    ],
+    "aisle": "Produce",
+    "image": "pineapple.jpg",
+    "meta": [],
+    "nutrition": {
+        "nutrients": [
+            {
+                "name": "Calories",
+                "amount": 452.5,
+                "unit": "cal",
+                "percentOfDailyNeeds": 22.63
+            },
+            {
+                "name": "Fat",
+                "amount": 1.09,
+                "unit": "g",
+                "percentOfDailyNeeds": 1.67
+            },
+            {
+                "name": "Saturated Fat",
+                "amount": 0.08,
+                "unit": "g",
+                "percentOfDailyNeeds": 0.51
+            },
+            {
+                "name": "Carbohydrates",
+                "amount": 118.74,
+                "unit": "g",
+                "percentOfDailyNeeds": 39.58
+            },
+            {
+                "name": "Net Carbohydrates",
+                "amount": 106.07,
+                "unit": "g",
+                "percentOfDailyNeeds": 38.57
+            },
+            {
+                "name": "Sugar",
+                "amount": 89.14,
+                "unit": "g",
+                "percentOfDailyNeeds": 99.05
+            },
+            {
+                "name": "Cholesterol",
+                "amount": 0.0,
+                "unit": "mg",
+                "percentOfDailyNeeds": 0.0
+            },
+            {
+                "name": "Sodium",
+                "amount": 9.05,
+                "unit": "mg",
+                "percentOfDailyNeeds": 0.39
+            },
+            {
+                "name": "Protein",
+                "amount": 4.89,
+                "unit": "g",
+                "percentOfDailyNeeds": 9.77
+            },
+            {
+                "name": "Vitamin C",
+                "amount": 432.59,
+                "unit": "mg",
+                "percentOfDailyNeeds": 524.35
+            },
+            {
+                "name": "Manganese",
+                "amount": 8.39,
+                "unit": "mg",
+                "percentOfDailyNeeds": 419.47
+            },
+            {
+                "name": "Fiber",
+                "amount": 12.67,
+                "unit": "g",
+                "percentOfDailyNeeds": 50.68
+            },
+            {
+                "name": "Vitamin B6",
+                "amount": 1.01,
+                "unit": "mg",
+                "percentOfDailyNeeds": 50.68
+            },
+            {
+                "name": "Copper",
+                "amount": 1.0,
+                "unit": "mg",
+                "percentOfDailyNeeds": 49.78
+            },
+            {
+                "name": "Vitamin B1",
+                "amount": 0.72,
+                "unit": "mg",
+                "percentOfDailyNeeds": 47.66
+            },
+            {
+                "name": "Folate",
+                "amount": 162.9,
+                "unit": "µg",
+                "percentOfDailyNeeds": 40.73
+            },
+            {
+                "name": "Potassium",
+                "amount": 986.45,
+                "unit": "mg",
+                "percentOfDailyNeeds": 28.18
+            },
+            {
+                "name": "Magnesium",
+                "amount": 108.6,
+                "unit": "mg",
+                "percentOfDailyNeeds": 27.15
+            },
+            {
+                "name": "Vitamin B3",
+                "amount": 4.53,
+                "unit": "mg",
+                "percentOfDailyNeeds": 22.63
+            },
+            {
+                "name": "Vitamin B5",
+                "amount": 1.93,
+                "unit": "mg",
+                "percentOfDailyNeeds": 19.28
+            },
+            {
+                "name": "Vitamin B2",
+                "amount": 0.29,
+                "unit": "mg",
+                "percentOfDailyNeeds": 17.04
+            },
+            {
+                "name": "Iron",
+                "amount": 2.62,
+                "unit": "mg",
+                "percentOfDailyNeeds": 14.58
+            },
+            {
+                "name": "Calcium",
+                "amount": 117.65,
+                "unit": "mg",
+                "percentOfDailyNeeds": 11.77
+            },
+            {
+                "name": "Vitamin A",
+                "amount": 524.9,
+                "unit": "IU",
+                "percentOfDailyNeeds": 10.5
+            },
+            {
+                "name": "Zinc",
+                "amount": 1.09,
+                "unit": "mg",
+                "percentOfDailyNeeds": 7.24
+            },
+            {
+                "name": "Phosphorus",
+                "amount": 72.4,
+                "unit": "mg",
+                "percentOfDailyNeeds": 7.24
+            },
+            {
+                "name": "Vitamin K",
+                "amount": 6.34,
+                "unit": "Âµg",
+                "percentOfDailyNeeds": 6.03
+            },
+            {
+                "name": "Selenium",
+                "amount": 0.91,
+                "unit": "Âµg",
+                "percentOfDailyNeeds": 1.29
+            },
+            {
+                "name": "Vitamin E",
+                "amount": 0.18,
+                "unit": "mg",
+                "percentOfDailyNeeds": 1.21
+            }
+        ],
+        "properties": [
+            {
+                "name": "Glycemic Index",
+                "amount": 58.67,
+                "unit": ""
+            },
+            {
+                "name": "Glycemic Load",
+                "amount": 62.23,
+                "unit": ""
+            }
+        ],
+        "flavonoids": [
+            {
+                "name": "Cyanidin",
+                "amount": 0.0,
+                "unit": "mg"
+            }
+        ],
+        "caloricBreakdown": {
+            "percentProtein": 3.88,
+            "percentFat": 1.94,
+            "percentCarbs": 94.18
+        },
+        "weightPerServing": {
+            "amount": 905,
+            "unit": "g"
+        }
+    },
+    "categoryPath": [
+        "tropical fruit",
+        "fruit"
+    ]
+}
+Quotas
+Calling this endpoint requires 1 point. Learn more about quotas.
+
+Compute Ingredient Amount
+Compute the amount you need of a certain ingredient for a certain nutritional goal. For example, how much pineapple do you have to eat to get 10 grams of protein?
+
+GET https://api.spoonacular.com/food/ingredients/{id}/amount
+Headers
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+id	number	9266	The id of the ingredient you want the amount for.
+nutrient	string	protein	The target nutrient. See a list of supported nutrients.
+target	number	2	The target number of the given nutrient.
+unit	string	oz	The target unit.
+Example Request and Response
+GET https://api.spoonacular.com/food/ingredients/9266/amount?nutrient=protein&target=10&unit=oz
+{
+    "amount": 65.32,
+    "unit": "oz"
+}
+Quotas
+Calling this endpoint requires 1 point. Learn more about quotas.
+
+Parse Ingredients
+Extract an ingredient from plain text.
+
+POST https://api.spoonacular.com/recipes/parseIngredients
+Headers
+Request Headers:
+
+Content-Type: application/x-www-form-urlencoded
+Response Headers:
+
+Content-Type: application/json
+Parameters
+Name	Type	Example	Description
+ingredientList	string	1 cup green tea	The ingredient list of the recipe, one ingredient per line.
+servings	number	1	The number of servings that you can make from the ingredients.
+includeNutrition	boolean	true	Whether nutrition data should be added to correctly parsed ingredients.
+language	string	en	The input language, either "en" or "de".
+Example Request and Response
+POST https://api.spoonacular.com/recipes/parseIngredients
+[
+    {
+        "id": 10014355,
+        "original": "1 cup green tea",
+        "originalName": "green tea",
+        "name": "tea",
+        "nameClean": "green tea",
+        "amount": 1.0,
+        "unit": "cup",
+        "unitShort": "cup",
+        "unitLong": "cup",
+        "possibleUnits": [
+            "g",
+            "oz",
+            "fluid ounce",
+            "cup"
+        ],
+        "estimatedCost": {
+            "value": 1786.86,
+            "unit": "US Cents"
+        },
+        "consistency": "solid",
+        "aisle": "Tea and Coffee",
+        "image": "green-tea-leaves.jpg",
+        "meta": [
+            "green"
+        ],
+        "nutrition": {
+            "nutrients": [
+                {
+                    "name": "Calories",
+                    "amount": 2.36,
+                    "unit": "kcal",
+                    "percentOfDailyNeeds": 0.12
+                },
+                {
+                    "name": "Fat",
+                    "amount": 0.0,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.0
+                },
+                {
+                    "name": "Saturated Fat",
+                    "amount": 0.0,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.03
+                },
+                {
+                    "name": "Carbohydrates",
+                    "amount": 0.71,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.24
+                },
+                {
+                    "name": "Net Carbohydrates",
+                    "amount": 0.71,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.26
+                },
+                {
+                    "name": "Sugar",
+                    "amount": 0.0,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.0
+                },
+                {
+                    "name": "Cholesterol",
+                    "amount": 0.0,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 0.0
+                },
+                {
+                    "name": "Sodium",
+                    "amount": 7.08,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 0.31
+                },
+                {
+                    "name": "Caffeine",
+                    "amount": 47.2,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 15.73
+                },
+                {
+                    "name": "Protein",
+                    "amount": 0.0,
+                    "unit": "g",
+                    "percentOfDailyNeeds": 0.0
+                },
+                {
+                    "name": "Manganese",
+                    "amount": 0.52,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 25.84
+                },
+                {
+                    "name": "Folate",
+                    "amount": 11.8,
+                    "unit": "Âµg",
+                    "percentOfDailyNeeds": 2.95
+                },
+                {
+                    "name": "Potassium",
+                    "amount": 87.32,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 2.49
+                },
+                {
+                    "name": "Vitamin B2",
+                    "amount": 0.03,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 1.94
+                },
+                {
+                    "name": "Magnesium",
+                    "amount": 7.08,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 1.77
+                },
+                {
+                    "name": "Copper",
+                    "amount": 0.02,
+                    "unit": "mg",
+                    "percentOfDailyNeeds": 1.18
+                }
+            ],
+            "properties": [
+                {
+                    "name": "Glycemic Index",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Glycemic Load",
+                    "amount": 0.0,
+                    "unit": ""
+                }
+            ],
+            "flavonoids": [
+                {
+                    "name": "Cyanidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Petunidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Delphinidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Malvidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Pelargonidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Peonidin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Catechin",
+                    "amount": 3.56,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Epigallocatechin",
+                    "amount": 19.0,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Epicatechin",
+                    "amount": 5.03,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Epicatechin 3-gallate",
+                    "amount": 13.83,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Epigallocatechin 3-gallate",
+                    "amount": 22.09,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Theaflavin",
+                    "amount": 3.73,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Thearubigins",
+                    "amount": 191.87,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Eriodictyol",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Hesperetin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Naringenin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Apigenin",
+                    "amount": 0.0,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Luteolin",
+                    "amount": 0.0,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Isorhamnetin",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Kaempferol",
+                    "amount": 3.33,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Myricetin",
+                    "amount": 1.06,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Quercetin",
+                    "amount": 5.17,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Theaflavin-3,3'-digallate",
+                    "amount": 4.13,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Theaflavin-3'-gallate",
+                    "amount": 3.56,
+                    "unit": "mg"
+                },
+                {
+                    "name": "Theaflavin-3-gallate",
+                    "amount": 0.0,
+                    "unit": ""
+                },
+                {
+                    "name": "Gallocatechin",
+                    "amount": 2.95,
+                    "unit": "mg"
+                }
+            ],
+            "caloricBreakdown": {
+                "percentProtein": 0.0,
+                "percentFat": 0.0,
+                "percentCarbs": 100.0
+            },
+            "weightPerServing": {
+                "amount": 236,
+                "unit": "g"
+            }
+        }
+    }
+]
+Quotas
+Calling this endpoint requires 1 point per parsed ingredient. Learn more about quotas.

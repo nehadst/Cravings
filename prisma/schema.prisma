@@ -7,23 +7,24 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id               String   @id @default(uuid())
+  id               String   @id @default(cuid())
   email            String   @unique
   password         String
   name             String?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
   preferences      UserPreferences?
+  savedRecipes     SavedRecipe[]
 }
 
 model UserPreferences {
-  id                  String   @id @default(uuid())
+  id                  String   @id @default(cuid())
   userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                User     @relation(fields: [userId], references: [id])
   
   // Dietary preferences
   isVegan             Boolean  @default(false)
@@ -40,7 +41,7 @@ model UserPreferences {
   isLowFat            Boolean  @default(false)
   
   // Allergies - stored as comma-separated string
-  allergies           String   @default("")
+  allergies           String
   
   // Nutritional goals
   calorieTarget       Int?
@@ -49,9 +50,22 @@ model UserPreferences {
   fatTarget           Int?
   
   // Additional information
-  preferredCuisines   String   @default("")
-  dislikedIngredients String   @default("")
+  preferredCuisines   String
+  dislikedIngredients String
   
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+}
+
+model SavedRecipe {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  recipeId  Int
+  title     String
+  image     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, recipeId])
 } 
