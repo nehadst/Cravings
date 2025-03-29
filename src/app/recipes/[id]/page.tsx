@@ -10,6 +10,16 @@ interface RecipePageProps {
   params: Promise<{ id: string }>;
 }
 
+function cleanInstructions(instructions: string): string[] {
+  // Remove HTML tags and split into steps
+  return instructions
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/^\d+\.\s*/, '') // Remove leading numbers
+    .split('\n')
+    .map(step => step.trim())
+    .filter(step => step.length > 0); // Remove empty lines
+}
+
 export default function RecipePage({ params }: RecipePageProps) {
   const resolvedParams = use(params);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -39,50 +49,47 @@ export default function RecipePage({ params }: RecipePageProps) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-8"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="h-96 bg-gray-200 dark:bg-gray-700 rounded"></div>
+              <div className="space-y-4">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !recipe) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400">Loading recipe...</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Error</h1>
+            <p className="text-gray-600 dark:text-gray-400">{error || 'Recipe not found'}</p>
+            <Link
+              href="/recipes"
+              className="mt-4 inline-block text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+            >
+              Back to Recipes
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-red-600 dark:text-red-400">
-            {error}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!recipe) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            Recipe not found
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const instructions = cleanInstructions(recipe.instructions);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/recipes"
-          className="inline-block text-blue-600 dark:text-blue-400 hover:underline mb-8"
-        >
-          ← Back to Recipes
-        </Link>
-
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-          {/* Recipe Header */}
           <div className="relative h-96">
             <Image
               src={recipe.image}
@@ -91,125 +98,74 @@ export default function RecipePage({ params }: RecipePageProps) {
               className="object-cover"
             />
           </div>
-
           <div className="p-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {recipe.title}
-            </h1>
-
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{recipe.title}</h1>
+            
             {/* Recipe Info */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-              <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Ready in</p>
-                <p className="font-semibold">{recipe.readyInMinutes} mins</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="font-semibold text-gray-900 dark:text-white">Ready in</div>
+                <div className="text-gray-600 dark:text-gray-400">{recipe.readyInMinutes} mins</div>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Servings</p>
-                <p className="font-semibold">{recipe.servings}</p>
+              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="font-semibold text-gray-900 dark:text-white">Servings</div>
+                <div className="text-gray-600 dark:text-gray-400">{recipe.servings}</div>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Cuisine</p>
-                <p className="font-semibold">{recipe.cuisines.join(', ')}</p>
+              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="font-semibold text-gray-900 dark:text-white">Cuisine</div>
+                <div className="text-gray-600 dark:text-gray-400">{recipe.cuisines.join(', ')}</div>
               </div>
-              <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">Diet</p>
-                <p className="font-semibold">{recipe.diets.join(', ')}</p>
-              </div>
-            </div>
-
-            {/* Summary */}
-            <div className="prose dark:prose-invert max-w-none mb-8">
-              <div dangerouslySetInnerHTML={{ __html: recipe.summary }} />
-            </div>
-
-            {/* Ingredients */}
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Ingredients
-              </h2>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {recipe.extendedIngredients.map((ingredient, index) => (
-                  <li
-                    key={index}
-                    className="flex items-center space-x-2 text-gray-700 dark:text-gray-300"
-                  >
-                    <span className="text-blue-600 dark:text-blue-400">•</span>
-                    <span>
-                      {ingredient.amount} {ingredient.unit} {ingredient.name}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Instructions */}
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Instructions
-              </h2>
-              <div className="prose dark:prose-invert max-w-none">
-                {recipe.instructions.split('\n').map((step, index) => (
-                  <p key={index} className="mb-4">
-                    <span className="font-semibold text-blue-600 dark:text-blue-400">
-                      {index + 1}.
-                    </span>{' '}
-                    {step}
-                  </p>
-                ))}
+              <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                <div className="font-semibold text-gray-900 dark:text-white">Diet</div>
+                <div className="text-gray-600 dark:text-gray-400">{recipe.diets.join(', ')}</div>
               </div>
             </div>
-
+            
             {/* Dietary Information */}
-            <div className="mt-8">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                Dietary Information
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    Vegetarian
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {recipe.vegetarian ? 'Yes' : 'No'}
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    Vegan
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {recipe.vegan ? 'Yes' : 'No'}
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    Gluten Free
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {recipe.glutenFree ? 'Yes' : 'No'}
-                  </div>
-                </div>
-                <div className="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                  <div className="font-semibold text-gray-900 dark:text-white">
-                    Dairy Free
-                  </div>
-                  <div className="text-gray-600 dark:text-gray-400">
-                    {recipe.dairyFree ? 'Yes' : 'No'}
-                  </div>
-                </div>
-              </div>
+            <div className="mb-6 flex flex-wrap gap-2">
+              {recipe.dairyFree && (
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
+                  Dairy Free
+                </span>
+              )}
+              {recipe.glutenFree && (
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
+                  Gluten Free
+                </span>
+              )}
+              {recipe.vegetarian && (
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
+                  Vegetarian
+                </span>
+              )}
+              {recipe.vegan && (
+                <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
+                  Vegan
+                </span>
+              )}
             </div>
 
-            {/* Source Link */}
-            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
-              <a
-                href={recipe.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                View Original Recipe →
-              </a>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Ingredients</h2>
+                <ul className="list-disc list-inside space-y-2">
+                  {recipe.extendedIngredients.map((ingredient, index) => (
+                    <li key={index} className="text-gray-600 dark:text-gray-300">
+                      {ingredient.amount} {ingredient.unit} {ingredient.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Instructions</h2>
+                <ol className="list-decimal list-inside space-y-4">
+                  {instructions.map((step, index) => (
+                    <li key={index} className="text-gray-600 dark:text-gray-300">
+                      {step}
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
         </div>
