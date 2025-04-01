@@ -1,18 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { authOptions } from '@/lib/auth';
+import prisma from '@/lib/prisma';
 
 export async function GET() {
-  const session = await getServerSession(authOptions);
-  
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
       include: { preferences: true }
@@ -22,52 +20,36 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Return default values if no preferences exist
-    if (!user.preferences) {
-      return NextResponse.json({
-        dietaryPreferences: [],
-        allergies: [],
-        nutritionalGoals: {
-          calories: 2000,
-          protein: 50,
-          carbs: 250,
-          fats: 70
-        },
-        cuisines: [],
-        dislikedIngredients: []
-      });
-    }
-
     // Convert boolean preferences to dietary preferences array
     const dietaryPreferences = [];
-    if (user.preferences.isVegan) dietaryPreferences.push('vegan');
-    if (user.preferences.isVegetarian) dietaryPreferences.push('vegetarian');
-    if (user.preferences.isPescatarian) dietaryPreferences.push('pescatarian');
-    if (user.preferences.isKeto) dietaryPreferences.push('ketogenic');
-    if (user.preferences.isPaleo) dietaryPreferences.push('paleo');
-    if (user.preferences.isGlutenFree) dietaryPreferences.push('gluten free');
-    if (user.preferences.isDairyFree) dietaryPreferences.push('dairy free');
-    if (user.preferences.isNutFree) dietaryPreferences.push('tree nuts');
-    if (user.preferences.isHalal) dietaryPreferences.push('halal');
-    if (user.preferences.isKosher) dietaryPreferences.push('kosher');
-    if (user.preferences.isLowCarb) dietaryPreferences.push('low-carb');
-    if (user.preferences.isLowFat) dietaryPreferences.push('low-fat');
+    if (user.preferences?.isVegan) dietaryPreferences.push('vegan');
+    if (user.preferences?.isVegetarian) dietaryPreferences.push('vegetarian');
+    if (user.preferences?.isPescatarian) dietaryPreferences.push('pescatarian');
+    if (user.preferences?.isKeto) dietaryPreferences.push('ketogenic');
+    if (user.preferences?.isPaleo) dietaryPreferences.push('paleo');
+    if (user.preferences?.isGlutenFree) dietaryPreferences.push('gluten free');
+    if (user.preferences?.isDairyFree) dietaryPreferences.push('dairy free');
+    if (user.preferences?.isNutFree) dietaryPreferences.push('tree nuts');
+    if (user.preferences?.isHalal) dietaryPreferences.push('halal');
+    if (user.preferences?.isKosher) dietaryPreferences.push('kosher');
+    if (user.preferences?.isLowCarb) dietaryPreferences.push('low-carb');
+    if (user.preferences?.isLowFat) dietaryPreferences.push('low-fat');
 
     // Parse allergies from string
-    const allergies = user.preferences.allergies?.split(',').filter(Boolean) || [];
+    const allergies = user.preferences?.allergies?.split(',').filter(Boolean) || [];
 
     // Parse cuisines and disliked ingredients from strings
-    const cuisines = user.preferences.preferredCuisines?.split(',').filter(Boolean) || [];
-    const dislikedIngredients = user.preferences.dislikedIngredients?.split(',').filter(Boolean) || [];
+    const cuisines = user.preferences?.preferredCuisines?.split(',').filter(Boolean) || [];
+    const dislikedIngredients = user.preferences?.dislikedIngredients?.split(',').filter(Boolean) || [];
 
     return NextResponse.json({
       dietaryPreferences,
       allergies,
       nutritionalGoals: {
-        calories: user.preferences.calorieTarget || 2000,
-        protein: user.preferences.proteinTarget || 50,
-        carbs: user.preferences.carbTarget || 250,
-        fats: user.preferences.fatTarget || 70
+        calories: user.preferences?.calorieTarget || 2000,
+        protein: user.preferences?.proteinTarget || 50,
+        carbs: user.preferences?.carbTarget || 250,
+        fats: user.preferences?.fatTarget || 70
       },
       cuisines,
       dislikedIngredients
@@ -79,13 +61,13 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const session = await getServerSession(authOptions);
-  
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
   try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     
     // Parse allergies from comma-separated string
@@ -159,12 +141,42 @@ export async function POST(request: Request) {
             }
           }
         }
-      }
+      },
+      include: { preferences: true }
     });
 
-    return NextResponse.json({ success: true });
+    // Convert boolean preferences to dietary preferences array for response
+    const dietaryPreferences = [];
+    if (user.preferences?.isVegan) dietaryPreferences.push('vegan');
+    if (user.preferences?.isVegetarian) dietaryPreferences.push('vegetarian');
+    if (user.preferences?.isPescatarian) dietaryPreferences.push('pescatarian');
+    if (user.preferences?.isKeto) dietaryPreferences.push('ketogenic');
+    if (user.preferences?.isPaleo) dietaryPreferences.push('paleo');
+    if (user.preferences?.isGlutenFree) dietaryPreferences.push('gluten free');
+    if (user.preferences?.isDairyFree) dietaryPreferences.push('dairy free');
+    if (user.preferences?.isNutFree) dietaryPreferences.push('tree nuts');
+    if (user.preferences?.isHalal) dietaryPreferences.push('halal');
+    if (user.preferences?.isKosher) dietaryPreferences.push('kosher');
+    if (user.preferences?.isLowCarb) dietaryPreferences.push('low-carb');
+    if (user.preferences?.isLowFat) dietaryPreferences.push('low-fat');
+
+    return NextResponse.json({
+      message: 'Preferences updated successfully',
+      user: {
+        dietaryPreferences,
+        allergies: user.preferences?.allergies?.split(',').filter(Boolean) || [],
+        nutritionalGoals: {
+          calories: user.preferences?.calorieTarget || 2000,
+          protein: user.preferences?.proteinTarget || 50,
+          carbs: user.preferences?.carbTarget || 250,
+          fats: user.preferences?.fatTarget || 70
+        },
+        cuisines: user.preferences?.preferredCuisines?.split(',').filter(Boolean) || [],
+        dislikedIngredients: user.preferences?.dislikedIngredients?.split(',').filter(Boolean) || []
+      }
+    });
   } catch (error) {
-    console.error('Error saving preferences:', error);
+    console.error('Error updating preferences:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 

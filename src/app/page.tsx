@@ -3,19 +3,29 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const { data: session, status } = useSession();
+  const router = useRouter();
 
   // Only show authenticated content when status is "authenticated"
   const isAuthenticated = status === "authenticated" && session;
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen bg-black dark:bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="w-full flex justify-end">
         {isAuthenticated && (
           <Link
-            href="/recipes"
+            href="/preferences"
             className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mr-4"
           >
             Recipes
@@ -65,10 +75,10 @@ export default function Home() {
         <div className="flex gap-6 items-center flex-col sm:flex-row">
           {isAuthenticated ? (
             <Link
-              href="/profile"
+              href="/preferences"
               className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"
             >
-              Set Up Your Profile
+              Get Started with Recipes
             </Link>
           ) : (
             <Link
@@ -86,28 +96,36 @@ export default function Home() {
           </a>
         </div>
         
-        <div id="features" className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-          <div className="border border-black/10 dark:border-white/10 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Recipe Recommendations</h2>
-            <p>Find recipes that match your dietary preferences and nutritional goals.</p>
+        <div id="features" className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Recipe Recommendations</h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Get personalized recipe suggestions based on your dietary preferences and restrictions.
+            </p>
           </div>
-          <div className="border border-black/10 dark:border-white/10 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Inventory Tracking</h2>
-            <p>Keep track of what's in your pantry and get alerts when items run low.</p>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Inventory Management</h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Track your kitchen inventory and get alerts when items are running low.
+            </p>
           </div>
-          <div className="border border-black/10 dark:border-white/10 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Grocery List Management</h2>
-            <p>Automatically generate shopping lists based on recipes you like.</p>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Grocery Lists</h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Create and manage your grocery lists based on your meal plans.
+            </p>
           </div>
-          <div className="border border-black/10 dark:border-white/10 p-6 rounded-lg">
-            <h2 className="text-xl font-semibold mb-3">Nutritional Analysis</h2>
-            <p>Get detailed nutritional information for each recipe.</p>
+          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Nutritional Analysis</h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              Track your nutritional intake and get insights into your eating habits.
+            </p>
           </div>
         </div>
       </main>
       
-      <footer className="flex gap-[24px] flex-wrap items-center justify-center">
-        <p className="text-sm text-gray-500">© 2025 Cravings App. All rights reserved.</p>
+      <footer className="w-full text-center text-gray-600 dark:text-gray-400">
+        <p>© 2024 Cravings. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -1,156 +1,132 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import SwipeableRecipeCard from '@/components/SwipeableRecipeCard';
-import { Recipe, UserPreferences } from '@/services/spoonacular';
+import { Recipe } from '@/services/spoonacular';
 
 export default function RecipesPage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
+  const { data: session, status } = useSession();
+  const [isLoading, setIsLoading] = useState(true);
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [hasPreferences, setHasPreferences] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [preferences, setPreferences] = useState<UserPreferences | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
+    } else if (status === 'authenticated') {
+      checkPreferences();
     }
   }, [status, router]);
 
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const response = await fetch('/api/preferences');
-        if (!response.ok) {
-          throw new Error('Failed to fetch preferences');
-        }
-        const data = await response.json();
-        setPreferences(data);
-        
-        // If no preferences are set, redirect to preferences page
-        if (!data.dietaryPreferences.length && !data.cuisines.length) {
-          router.push('/preferences');
-        }
-      } catch (err) {
-        console.error('Error fetching preferences:', err);
-        setError('Failed to load preferences');
+  const checkPreferences = async () => {
+    try {
+      const response = await fetch('/api/preferences');
+      if (!response.ok) {
+        throw new Error('Failed to fetch preferences');
       }
-    };
-
-    if (session?.user) {
-      fetchPreferences();
+      const data = await response.json();
+      
+      // Only redirect to preferences if we have no preferences and we're not coming from the preferences page
+      if ((!data.dietaryPreferences || data.dietaryPreferences.length === 0) && !window.location.search.includes('from=preferences')) {
+        router.push('/preferences');
+      } else {
+        // If we have preferences or we're coming from preferences page, fetch recipes
+        fetchRecipes();
+      }
+    } catch (error) {
+      console.error('Error checking preferences:', error);
+      setError('Failed to load preferences');
     }
-  }, [session, router]);
+  };
 
-  useEffect(() => {
-    const loadInitialRecipes = async () => {
-      if (!preferences) return;
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        const params = new URLSearchParams();
-        if (searchQuery) {
-          params.append('query', searchQuery);
-        }
-        if (preferences.dietaryPreferences.length) {
-          params.append('diet', preferences.dietaryPreferences.join(','));
-        }
-        if (preferences.allergies.length) {
-          params.append('intolerances', preferences.allergies.join(','));
-        }
-        if (preferences.cuisines.length) {
-          params.append('cuisine', preferences.cuisines.join(','));
-        }
-
-        const response = await fetch(`/api/recipes?${params.toString()}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch recipes');
-        }
-        const data = await response.json();
-        setRecipes(data);
-      } catch (err) {
-        console.error('Error loading recipes:', err);
-        setError('Failed to load recipes');
-      } finally {
-        setLoading(false);
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch('/api/recipes');
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes');
       }
-    };
-
-    loadInitialRecipes();
-  }, [preferences, searchQuery]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // The useEffect will handle the search when searchQuery changes
+      const data = await response.json();
+      setRecipes(data);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleSwipe = async (recipeId: number, direction: 'left' | 'right') => {
-    // TODO: Implement swipe handling (like/dislike)
-    console.log(`Swiped ${direction} on recipe ${recipeId}`);
+  const handleSwipeLeft = async () => {
+    // Move to next recipe
+    setCurrentIndex(prev => prev + 1);
   };
 
-  if (loading) {
+  const handleSwipeRight = async () => {
+    // Save recipe
+    try {
+      await fetch('/api/recipes/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(recipes[currentIndex]),
+      });
+    } catch (error) {
+      console.error('Error saving recipe:', error);
+    }
+
+    // Move to next recipe
+    setCurrentIndex(prev => prev + 1);
+  };
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400">Loading recipes...</p>
-          </div>
+      <div className="min-h-screen bg-black dark:bg-black flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
+
+  if (recipes.length === 0) {
+    return (
+      <div className="min-h-screen bg-black dark:bg-black flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-2xl font-bold mb-4">No more recipes!</h2>
+          <p className="text-gray-400">Check back later for more recommendations.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <form onSubmit={handleSearch} className="flex gap-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search recipes..."
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Search
-            </button>
-          </form>
+    <div className="min-h-screen bg-black dark:bg-black">
+      <header className="bg-white dark:bg-gray-800 shadow">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Recipe Recommendations</h1>
+          <button 
+            onClick={() => router.push('/')}
+            className="flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back to Home
+          </button>
         </div>
-
-        {error && (
-          <div className="mb-8 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-md">
-            {error}
-          </div>
-        )}
-
-        {recipes.length === 0 ? (
-          <div className="text-center">
-            <p className="text-gray-500 dark:text-gray-400">No recipes found</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recipes.map((recipe) => (
-              <SwipeableRecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                onSwipeLeft={() => handleSwipe(recipe.id, 'left')}
-                onSwipeRight={() => handleSwipe(recipe.id, 'right')}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      </header>
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-md mx-auto">
+          <SwipeableRecipeCard
+            recipe={recipes[currentIndex]}
+            onSwipeLeft={handleSwipeLeft}
+            onSwipeRight={handleSwipeRight}
+          />
+        </div>
+      </main>
     </div>
   );
 } 

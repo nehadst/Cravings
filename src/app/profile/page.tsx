@@ -1,8 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
-import ProfileForm from '@/components/ProfileForm';
+import AccountForm from '@/components/AccountForm';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -33,7 +32,7 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-black dark:bg-black">
       <header className="bg-white dark:bg-gray-800 shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Your Dietary Profile</h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Account Settings</h1>
           <Link 
             href="/" 
             className="flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
@@ -49,9 +48,9 @@ export default function ProfilePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 md:p-8">
           <p className="text-gray-600 dark:text-gray-300 mb-6">
-            Tell us about your dietary preferences and needs so we can provide personalized recipe recommendations.
+            Manage your account settings, update your password, or delete your account.
           </p>
-          <ProfileForm />
+          <AccountForm />
         </div>
       </main>
     </div>
