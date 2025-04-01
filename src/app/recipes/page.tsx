@@ -14,6 +14,7 @@ export default function RecipesPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasPreferences, setHasPreferences] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -31,12 +32,10 @@ export default function RecipesPage() {
       }
       const data = await response.json();
       
-      // Only redirect to preferences if we have no preferences and we're not coming from the preferences page
       if ((!data.dietaryPreferences || data.dietaryPreferences.length === 0) && !window.location.search.includes('from=preferences')) {
         router.push('/preferences');
       } else {
-        // If we have preferences or we're coming from preferences page, fetch recipes
-        fetchRecipes();
+        await fetchRecipes();
       }
     } catch (error) {
       console.error('Error checking preferences:', error);
@@ -46,26 +45,30 @@ export default function RecipesPage() {
 
   const fetchRecipes = async () => {
     try {
+      setIsFetchingMore(true);
       const response = await fetch('/api/recipes');
       if (!response.ok) {
         throw new Error('Failed to fetch recipes');
       }
       const data = await response.json();
-      setRecipes(data);
+      setRecipes(prevRecipes => [...prevRecipes, ...data]);
     } catch (error) {
       console.error('Error fetching recipes:', error);
+      setError('Failed to fetch recipes');
     } finally {
       setIsLoading(false);
+      setIsFetchingMore(false);
     }
   };
 
   const handleSwipeLeft = async () => {
-    // Move to next recipe
+    if (currentIndex >= recipes.length - 3 && !isFetchingMore) {
+      fetchRecipes();
+    }
     setCurrentIndex(prev => prev + 1);
   };
 
   const handleSwipeRight = async () => {
-    // Save recipe
     try {
       await fetch('/api/recipes/save', {
         method: 'POST',
@@ -78,11 +81,13 @@ export default function RecipesPage() {
       console.error('Error saving recipe:', error);
     }
 
-    // Move to next recipe
+    if (currentIndex >= recipes.length - 3 && !isFetchingMore) {
+      fetchRecipes();
+    }
     setCurrentIndex(prev => prev + 1);
   };
 
-  if (isLoading) {
+  if (isLoading && recipes.length === 0) {
     return (
       <div className="min-h-screen bg-black dark:bg-black">
         <header className="bg-white dark:bg-gray-800 shadow">
@@ -113,12 +118,21 @@ export default function RecipesPage() {
     );
   }
 
-  if (recipes.length === 0) {
+  if (currentIndex >= recipes.length) {
     return (
       <div className="min-h-screen bg-black dark:bg-black flex items-center justify-center">
         <div className="text-white text-center">
           <h2 className="text-2xl font-bold mb-4">No more recipes!</h2>
           <p className="text-gray-400">Check back later for more recommendations.</p>
+          <button
+            onClick={() => {
+              setCurrentIndex(0);
+              fetchRecipes();
+            }}
+            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+          >
+            Get More Recipes
+          </button>
         </div>
       </div>
     );
