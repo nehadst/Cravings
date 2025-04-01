@@ -68,115 +68,59 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const body = await request.json();
+    const data = await request.json();
     
-    // Parse allergies from comma-separated string
-    const allergies = body.allergies
-      .split(',')
-      .map((allergy: string) => allergy.trim())
-      .filter(Boolean)
-      .join(',');
+    // Convert dietary preferences array to boolean fields
+    const dietaryPreferences = data.dietaryPreferences || [];
+    const preferences = {
+      isVegan: dietaryPreferences.includes('vegan'),
+      isVegetarian: dietaryPreferences.includes('vegetarian'),
+      isPescatarian: dietaryPreferences.includes('pescatarian'),
+      isKeto: dietaryPreferences.includes('ketogenic'),
+      isPaleo: dietaryPreferences.includes('paleo'),
+      isGlutenFree: dietaryPreferences.includes('gluten free'),
+      isDairyFree: dietaryPreferences.includes('dairy free'),
+      isNutFree: dietaryPreferences.includes('tree nuts'),
+      isHalal: dietaryPreferences.includes('halal'),
+      isKosher: dietaryPreferences.includes('kosher'),
+      isLowCarb: dietaryPreferences.includes('low-carb'),
+      isLowFat: dietaryPreferences.includes('low-fat'),
+      // Handle arrays safely
+      allergies: Array.isArray(data.allergies) ? data.allergies.join(',') : data.allergies || '',
+      preferredCuisines: Array.isArray(data.cuisines) ? data.cuisines.join(',') : data.cuisines || '',
+      dislikedIngredients: Array.isArray(data.dislikedIngredients) ? data.dislikedIngredients.join(',') : data.dislikedIngredients || '',
+      // Handle nutritional goals
+      calorieTarget: data.nutritionalGoals?.calories || 2000,
+      proteinTarget: data.nutritionalGoals?.protein || 50,
+      carbTarget: data.nutritionalGoals?.carbs || 250,
+      fatTarget: data.nutritionalGoals?.fats || 70,
+    };
 
-    // Parse cuisines from comma-separated string
-    const cuisines = body.preferredCuisines
-      .split(',')
-      .map((cuisine: string) => cuisine.trim())
-      .filter(Boolean)
-      .join(',');
+    // First check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email: session.user.email }
+    });
 
-    // Parse disliked ingredients from comma-separated string
-    const dislikedIngredients = body.dislikedIngredients
-      .split(',')
-      .map((ingredient: string) => ingredient.trim())
-      .filter(Boolean)
-      .join(',');
+    if (!existingUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
-    // Update or create preferences
-    const user = await prisma.user.update({
+    // Update user preferences
+    const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
         preferences: {
           upsert: {
-            create: {
-              isVegan: body.isVegan,
-              isVegetarian: body.isVegetarian,
-              isPescatarian: body.isPescatarian,
-              isKeto: body.isKeto,
-              isPaleo: body.isPaleo,
-              isGlutenFree: body.isGlutenFree,
-              isDairyFree: body.isDairyFree,
-              isNutFree: body.isNutFree,
-              isHalal: body.isHalal,
-              isKosher: body.isKosher,
-              isLowCarb: body.isLowCarb,
-              isLowFat: body.isLowFat,
-              allergies,
-              calorieTarget: body.calorieTarget,
-              proteinTarget: body.proteinTarget,
-              carbTarget: body.carbTarget,
-              fatTarget: body.fatTarget,
-              preferredCuisines: cuisines,
-              dislikedIngredients
-            },
-            update: {
-              isVegan: body.isVegan,
-              isVegetarian: body.isVegetarian,
-              isPescatarian: body.isPescatarian,
-              isKeto: body.isKeto,
-              isPaleo: body.isPaleo,
-              isGlutenFree: body.isGlutenFree,
-              isDairyFree: body.isDairyFree,
-              isNutFree: body.isNutFree,
-              isHalal: body.isHalal,
-              isKosher: body.isKosher,
-              isLowCarb: body.isLowCarb,
-              isLowFat: body.isLowFat,
-              allergies,
-              calorieTarget: body.calorieTarget,
-              proteinTarget: body.proteinTarget,
-              carbTarget: body.carbTarget,
-              fatTarget: body.fatTarget,
-              preferredCuisines: cuisines,
-              dislikedIngredients
-            }
-          }
-        }
-      },
-      include: { preferences: true }
-    });
-
-    // Convert boolean preferences to dietary preferences array for response
-    const dietaryPreferences = [];
-    if (user.preferences?.isVegan) dietaryPreferences.push('vegan');
-    if (user.preferences?.isVegetarian) dietaryPreferences.push('vegetarian');
-    if (user.preferences?.isPescatarian) dietaryPreferences.push('pescatarian');
-    if (user.preferences?.isKeto) dietaryPreferences.push('ketogenic');
-    if (user.preferences?.isPaleo) dietaryPreferences.push('paleo');
-    if (user.preferences?.isGlutenFree) dietaryPreferences.push('gluten free');
-    if (user.preferences?.isDairyFree) dietaryPreferences.push('dairy free');
-    if (user.preferences?.isNutFree) dietaryPreferences.push('tree nuts');
-    if (user.preferences?.isHalal) dietaryPreferences.push('halal');
-    if (user.preferences?.isKosher) dietaryPreferences.push('kosher');
-    if (user.preferences?.isLowCarb) dietaryPreferences.push('low-carb');
-    if (user.preferences?.isLowFat) dietaryPreferences.push('low-fat');
-
-    return NextResponse.json({
-      message: 'Preferences updated successfully',
-      user: {
-        dietaryPreferences,
-        allergies: user.preferences?.allergies?.split(',').filter(Boolean) || [],
-        nutritionalGoals: {
-          calories: user.preferences?.calorieTarget || 2000,
-          protein: user.preferences?.proteinTarget || 50,
-          carbs: user.preferences?.carbTarget || 250,
-          fats: user.preferences?.fatTarget || 70
+            create: preferences,
+            update: preferences,
+          },
         },
-        cuisines: user.preferences?.preferredCuisines?.split(',').filter(Boolean) || [],
-        dislikedIngredients: user.preferences?.dislikedIngredients?.split(',').filter(Boolean) || []
-      }
+      },
     });
+
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error updating preferences:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Error saving preferences:', error);
+    return NextResponse.json({ error: 'Failed to save preferences' }, { status: 500 });
   }
 } 

@@ -36,11 +36,13 @@ export async function GET() {
     if (user.preferences?.isLowCarb) dietaryPreferences.push('low-carb');
     if (user.preferences?.isLowFat) dietaryPreferences.push('low-fat');
 
-    // Parse allergies from string
+    // Parse allergies from string and convert to Spoonacular's intolerance format
     const allergies = user.preferences?.allergies?.split(',').filter(Boolean) || [];
+    const intolerances = allergies.map(allergy => allergy.toLowerCase().trim());
 
-    // Parse cuisines from string
+    // Parse preferred cuisines and disliked ingredients
     const cuisines = user.preferences?.preferredCuisines?.split(',').filter(Boolean) || [];
+    const dislikedIngredients = user.preferences?.dislikedIngredients?.split(',').filter(Boolean) || [];
 
     // Get saved recipes to exclude them from recommendations
     const savedRecipes = await prisma.savedRecipe.findMany({
@@ -53,22 +55,28 @@ export async function GET() {
     // Build query parameters for Spoonacular API
     const params = new URLSearchParams();
     params.append('apiKey', process.env.SPOONACULAR_API_KEY || '');
-    params.append('number', '10'); // Get 10 recipes at a time
+    params.append('number', '20'); // Get more recipes to filter through
     params.append('addRecipeInformation', 'true');
     params.append('fillIngredients', 'true');
 
+    // Add dietary preferences as strict requirements
     if (dietaryPreferences.length > 0) {
       params.append('diet', dietaryPreferences.join(','));
+      params.append('strict', 'true');
     }
 
-    if (allergies.length > 0) {
-      params.append('intolerances', allergies.join(','));
+    // Add allergies as strict requirements
+    if (intolerances.length > 0) {
+      params.append('intolerances', intolerances.join(','));
+      params.append('strict', 'true');
     }
 
+    // Add cuisines as preferences
     if (cuisines.length > 0) {
       params.append('cuisine', cuisines.join(','));
     }
 
+    // Exclude saved recipes
     if (savedRecipeIds.length > 0) {
       params.append('exclude', savedRecipeIds.join(','));
     }
@@ -83,7 +91,38 @@ export async function GET() {
     }
 
     const data = await response.json();
-    return NextResponse.json(data.recipes);
+    
+    // Filter recipes based on all requirements
+    const filteredRecipes = data.recipes.filter((recipe: any) => {
+      // Get all ingredients in lowercase for case-insensitive matching
+      const ingredients = recipe.extendedIngredients?.map((ing: any) => 
+        ing.name.toLowerCase()
+      ) || [];
+
+      // Check if recipe contains any disliked ingredients
+      const hasDislikedIngredient = dislikedIngredients.some(disliked => 
+        ingredients.some(ingredient => ingredient.includes(disliked.toLowerCase()))
+      );
+
+      // Check if recipe contains any preferred ingredients
+      const hasPreferredIngredient = cuisines.length === 0 || cuisines.some(preferred => 
+        ingredients.some(ingredient => ingredient.includes(preferred.toLowerCase()))
+      );
+
+      // Check if recipe contains any allergic ingredients
+      const hasAllergicIngredient = intolerances.some(allergy => 
+        ingredients.some(ingredient => ingredient.includes(allergy))
+      );
+
+      // Recipe must:
+      // 1. NOT have any disliked ingredients
+      // 2. Have at least one preferred ingredient (if preferences specified)
+      // 3. NOT have any allergic ingredients
+      return !hasDislikedIngredient && hasPreferredIngredient && !hasAllergicIngredient;
+    });
+
+    // Return only the first 10 filtered recipes
+    return NextResponse.json(filteredRecipes.slice(0, 10));
   } catch (error) {
     console.error('Error fetching recipes:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

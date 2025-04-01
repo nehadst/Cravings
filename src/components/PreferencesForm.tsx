@@ -106,12 +106,41 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
     setError(null);
 
     try {
+      // Convert boolean preferences to dietary preferences array
+      const dietaryPreferences = [];
+      if (preferences.isVegan) dietaryPreferences.push('vegan');
+      if (preferences.isVegetarian) dietaryPreferences.push('vegetarian');
+      if (preferences.isPescatarian) dietaryPreferences.push('pescatarian');
+      if (preferences.isKeto) dietaryPreferences.push('ketogenic');
+      if (preferences.isPaleo) dietaryPreferences.push('paleo');
+      if (preferences.isGlutenFree) dietaryPreferences.push('gluten free');
+      if (preferences.isDairyFree) dietaryPreferences.push('dairy free');
+      if (preferences.isNutFree) dietaryPreferences.push('tree nuts');
+      if (preferences.isHalal) dietaryPreferences.push('halal');
+      if (preferences.isKosher) dietaryPreferences.push('kosher');
+      if (preferences.isLowCarb) dietaryPreferences.push('low-carb');
+      if (preferences.isLowFat) dietaryPreferences.push('low-fat');
+
+      // Format the data for the API
+      const apiData = {
+        dietaryPreferences,
+        allergies: preferences.allergies.split(',').map(a => a.trim()).filter(Boolean),
+        nutritionalGoals: {
+          calories: preferences.calorieTarget,
+          protein: preferences.proteinTarget,
+          carbs: preferences.carbTarget,
+          fats: preferences.fatTarget
+        },
+        cuisines: preferences.preferredCuisines.split(',').map(c => c.trim()).filter(Boolean),
+        dislikedIngredients: preferences.dislikedIngredients.split(',').map(i => i.trim()).filter(Boolean)
+      };
+
       const response = await fetch('/api/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(preferences),
+        body: JSON.stringify(apiData),
       });
 
       if (!response.ok) {

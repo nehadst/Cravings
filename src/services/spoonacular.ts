@@ -7,68 +7,67 @@ interface SpoonacularSearchResponse {
   totalResults: number;
 }
 
+export interface Ingredient {
+  id: number;
+  name: string;
+  amount: number;
+  unit: string;
+  aisle: string;
+  image: string;
+  consistency: string;
+  meta: string[];
+  original: string;
+  originalName: string;
+  nameClean: string;
+  measures: {
+    us: {
+      amount: number;
+      unitShort: string;
+      unitLong: string;
+    };
+    metric: {
+      amount: number;
+      unitShort: string;
+      unitLong: string;
+    };
+  };
+}
+
 export interface Recipe {
   id: number;
   title: string;
   image: string;
   imageType: string;
+  usedIngredientCount: number;
+  missedIngredientCount: number;
+  missedIngredients: Ingredient[];
+  usedIngredients: Ingredient[];
+  unusedIngredients: Ingredient[];
+  likes: number;
   readyInMinutes: number;
   servings: number;
   sourceUrl: string;
-  sourceName: string;
-  summary: string;
-  instructions: string;
-  extendedIngredients: ExtendedIngredient[];
+  extendedIngredients: Ingredient[];
+  analyzedInstructions: {
+    steps: {
+      number: number;
+      step: string;
+    }[];
+  }[];
   cuisines: string[];
-  dishTypes: string[];
-  diets: string[];
-  occasions: string[];
-  vegetarian: boolean;
-  vegan: boolean;
   glutenFree: boolean;
   dairyFree: boolean;
-  veryHealthy: boolean;
-  cheap: boolean;
-  veryPopular: boolean;
-  sustainable: boolean;
+  vegetarian: boolean;
+  vegan: boolean;
+  ketogenic: boolean;
+  paleo: boolean;
   lowFodmap: boolean;
-  weightWatcherSmartPoints: number;
-  gaps: string;
-  preparationMinutes: number | null;
-  cookingMinutes: number | null;
-  aggregateLikes: number;
-  healthScore: number;
-  creditsText: string;
-  license: string | null;
-  pricePerServing: number;
-  analyzedInstructions: any[];
-  originalId: number | null;
-  spoonacularScore: number;
-  spoonacularSourceUrl: string;
-}
-
-interface ExtendedIngredient {
-  id: number;
-  aisle: string;
-  image: string;
-  consistency: string;
-  name: string;
-  nameClean: string;
-  original: string;
-  originalName: string;
-  amount: number;
-  unit: string;
-  meta: string[];
-  measures: {
-    us: Measure;
-    metric: Measure;
+  nutrition?: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
   };
-}
-
-interface Measure {
-  amount: number;
-  unitShort: string;
-  unitLong: string;
 }
 
 export interface UserPreferences {
@@ -117,7 +116,33 @@ export async function searchRecipes(query: string, preferences?: any): Promise<R
     return [];
   }
 
-  return data.results;
+  // Filter results based on all dietary preferences
+  const filteredResults = data.results.filter(recipe => {
+    if (!preferences?.dietaryPreferences?.length) return true;
+
+    return preferences.dietaryPreferences.every((preference: string) => {
+      switch (preference) {
+        case 'Gluten-Free':
+          return recipe.glutenFree;
+        case 'Dairy-Free':
+          return recipe.dairyFree;
+        case 'Vegetarian':
+          return recipe.vegetarian;
+        case 'Vegan':
+          return recipe.vegan;
+        case 'Keto':
+          return recipe.ketogenic;
+        case 'Paleo':
+          return recipe.paleo;
+        case 'Low FODMAP':
+          return recipe.lowFodmap;
+        default:
+          return true;
+      }
+    });
+  });
+
+  return filteredResults;
 }
 
 export async function getRandomRecipes(count: number = 5, preferences?: any): Promise<Recipe[]> {
@@ -156,5 +181,12 @@ export async function getRecipeDetails(id: number): Promise<Recipe> {
     throw new Error('Failed to fetch recipe details');
   }
 
+  return response.json();
+}
+
+export async function getRecipeById(id: number): Promise<Recipe> {
+  const response = await fetch(
+    `https://api.spoonacular.com/recipes/${id}/information?apiKey=${process.env.NEXT_PUBLIC_SPOONACULAR_API_KEY}`
+  );
   return response.json();
 } 

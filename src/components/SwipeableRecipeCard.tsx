@@ -1,11 +1,13 @@
+'use client';
+
 import { useState } from 'react';
-import { useSwipeable } from 'react-swipeable';
+import { motion, PanInfo } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Recipe } from '@/services/spoonacular';
 
 interface SwipeableRecipeCardProps {
-  recipe: Recipe;
+  recipe?: Recipe;
   onSwipeLeft: () => void;
   onSwipeRight: () => void;
 }
@@ -15,104 +17,207 @@ export default function SwipeableRecipeCard({
   onSwipeLeft,
   onSwipeRight,
 }: SwipeableRecipeCardProps) {
+  const [imageError, setImageError] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  const handlers = useSwipeable({
-    onSwiping: (e) => {
-      setIsDragging(true);
-      setDragOffset(e.deltaX);
-    },
-    onTouchEndOrOnMouseUp: () => {
-      setIsDragging(false);
-      setDragOffset(0);
-    },
-    onSwipedLeft: () => {
-      onSwipeLeft();
-    },
-    onSwipedRight: () => {
-      onSwipeRight();
-    },
-    trackMouse: true,
-    preventDefaultTouchmoveEvent: true,
-  });
+  if (!recipe) {
+    return (
+      <div className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden p-4">
+        <div className="animate-pulse">
+          <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-lg mb-4"></div>
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+          <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+          <div className="space-y-2">
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-5/6"></div>
+            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-4/6"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-  const cardStyle = {
-    transform: isDragging ? `translateX(${dragOffset}px)` : 'none',
-    transition: isDragging ? 'none' : 'transform 0.3s ease-out',
+  const handleDragStart = (event: any, info: PanInfo) => {
+    setDragStart({ x: info.point.x, y: info.point.y });
+    setIsDragging(true);
   };
 
+  const handleDragEnd = (event: any, info: PanInfo) => {
+    setIsDragging(false);
+    const dragDistance = info.point.x - dragStart.x;
+
+    if (Math.abs(dragDistance) > 100) {
+      if (dragDistance > 0) {
+        onSwipeRight();
+      } else {
+        onSwipeLeft();
+      }
+    }
+  };
+
+  const dietaryTags = [
+    recipe.glutenFree && 'Gluten Free',
+    recipe.dairyFree && 'Dairy Free',
+    recipe.vegetarian && 'Vegetarian',
+    recipe.vegan && 'Vegan',
+    recipe.ketogenic && 'Keto',
+    recipe.paleo && 'Paleo',
+    recipe.lowFodmap && 'Low FODMAP',
+  ].filter(Boolean);
+
   return (
-    <div
-      {...handlers}
-      className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
-      style={cardStyle}
+    <motion.div
+      drag
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      dragElastic={0.7}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      className="relative w-full max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
     >
-      <div className="relative h-96">
-        <Image
-          src={recipe.image}
-          alt={recipe.title}
-          fill
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-          <h2 className="text-2xl font-bold mb-2">{recipe.title}</h2>
-          <div className="flex items-center space-x-4 text-sm">
-            <span>{recipe.readyInMinutes} mins</span>
-            <span>•</span>
-            <span>{recipe.servings} servings</span>
+      <div className="relative h-64 w-full">
+        {!imageError ? (
+          <Image
+            src={recipe.image}
+            alt={recipe.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
+            onError={() => setImageError(true)}
+            priority
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <span className="text-gray-500 dark:text-gray-400">No image available</span>
           </div>
-        </div>
+        )}
       </div>
 
-      <div className="p-6">
-        <div className="flex flex-wrap gap-2 mb-4">
-          {recipe.dairyFree && (
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
-              Dairy Free
-            </span>
-          )}
-          {recipe.glutenFree && (
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
-              Gluten Free
-            </span>
-          )}
-          {recipe.vegetarian && (
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
-              Vegetarian
-            </span>
-          )}
-          {recipe.vegan && (
-            <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded-full text-sm">
-              Vegan
-            </span>
-          )}
-        </div>
-
-        <div className="flex justify-between items-center">
-          <Link
-            href={`/recipes/${recipe.id}`}
-            className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-500"
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            {recipe.title}
+          </h2>
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
           >
-            View Recipe →
-          </Link>
-          <div className="flex space-x-4">
-            <button
-              onClick={onSwipeLeft}
-              className="p-2 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-100 hover:bg-red-200 dark:hover:bg-red-800"
+            <svg
+              className={`w-6 h-6 transform transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              ✕
-            </button>
-            <button
-              onClick={onSwipeRight}
-              className="p-2 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-100 hover:bg-green-200 dark:hover:bg-green-800"
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="flex flex-wrap gap-2 mb-4">
+          {dietaryTags.map((tag, index) => (
+            <span
+              key={index}
+              className="px-2 py-1 text-xs font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-100 rounded-full"
             >
-              ✓
-            </button>
-          </div>
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300 mb-4">
+          <span>Ready in {recipe.readyInMinutes} mins</span>
+          <span>•</span>
+          <span>{recipe.servings} servings</span>
+        </div>
+
+        <div className="space-y-2">
+          <h3 className="font-medium text-gray-900 dark:text-white">Ingredients:</h3>
+          <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
+            {recipe.extendedIngredients.slice(0, 5).map((ingredient, index) => (
+              <li key={index}>
+                {ingredient.amount} {ingredient.unit} {ingredient.name}
+              </li>
+            ))}
+            {recipe.extendedIngredients.length > 5 && (
+              <li>...and {recipe.extendedIngredients.length - 5} more</li>
+            )}
+          </ul>
+        </div>
+
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="mt-4 space-y-4"
+          >
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Instructions:</h3>
+              <ol className="list-decimal list-inside text-sm text-gray-600 dark:text-gray-300 space-y-2">
+                {recipe.analyzedInstructions[0]?.steps.map((step, index) => (
+                  <li key={index}>{step.step}</li>
+                ))}
+              </ol>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Nutritional Information:</h3>
+              <div className="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <div>Calories: {recipe.nutrition?.calories}</div>
+                <div>Protein: {recipe.nutrition?.protein}</div>
+                <div>Carbs: {recipe.nutrition?.carbs}</div>
+                <div>Fat: {recipe.nutrition?.fat}</div>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-gray-900 dark:text-white mb-2">Cuisines:</h3>
+              <div className="flex flex-wrap gap-2">
+                {recipe.cuisines.map((cuisine, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full"
+                  >
+                    {cuisine}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        <div className="mt-4">
+          <a
+            href={recipe.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center text-indigo-600 dark:text-indigo-400 hover:underline"
+          >
+            Visit Original Recipe
+            <svg
+              className="w-4 h-4 ml-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+              />
+            </svg>
+          </a>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 } 
