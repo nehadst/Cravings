@@ -5,18 +5,23 @@ import Link from "next/link";
 import { useSession, signOut } from 'next-auth/react';
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  // Only show authenticated content when status is "authenticated"
+  const isAuthenticated = status === "authenticated" && session;
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <header className="w-full flex justify-end">
-        <Link
-          href="/recipes"
-          className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-        >
-          Recipes
-        </Link>
-        {session ? (
+        {isAuthenticated && (
+          <Link
+            href="/recipes"
+            className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mr-4"
+          >
+            Recipes
+          </Link>
+        )}
+        {isAuthenticated ? (
           <>
             <Link 
               href="/profile" 
@@ -26,7 +31,7 @@ export default function Home() {
             </Link>
             <button
               onClick={() => signOut()}
-              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors"
+              className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors ml-4"
             >
               Sign Out
             </button>
@@ -58,7 +63,7 @@ export default function Home() {
         </p>
         
         <div className="flex gap-6 items-center flex-col sm:flex-row">
-          {session ? (
+          {isAuthenticated ? (
             <Link
               href="/profile"
               className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-gray-800 text-white gap-2 hover:bg-gray-900 font-medium text-base h-12 px-6 sm:w-auto"

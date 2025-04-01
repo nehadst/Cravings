@@ -1,42 +1,40 @@
 import { NextResponse } from 'next/server';
-import { getRandomRecipes, searchRecipes } from '@/services/spoonacular';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { searchRecipes, getRandomRecipes } from '@/services/spoonacular';
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+  
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('query');
-    const preferences = searchParams.get('preferences');
+    const diet = searchParams.get('diet');
+    const intolerances = searchParams.get('intolerances');
+    const cuisine = searchParams.get('cuisine');
 
-    console.log('API Route - Query:', query);
-    console.log('API Route - Preferences:', preferences);
-
-    let response;
+    let recipes;
     if (query) {
-      console.log('Searching for recipes with query:', query);
-      response = await searchRecipes(query, preferences ? JSON.parse(preferences) : undefined);
+      recipes = await searchRecipes(query, {
+        dietaryPreferences: diet ? diet.split(',') : [],
+        allergies: intolerances ? intolerances.split(',') : [],
+        cuisines: cuisine ? cuisine.split(',') : []
+      });
     } else {
-      console.log('Getting random recipes');
-      response = await getRandomRecipes(10, preferences ? JSON.parse(preferences) : undefined);
+      recipes = await getRandomRecipes(10, {
+        dietaryPreferences: diet ? diet.split(',') : [],
+        allergies: intolerances ? intolerances.split(',') : [],
+        cuisines: cuisine ? cuisine.split(',') : []
+      });
     }
 
-    console.log('API Route - Response:', response);
-    console.log('API Route - Response length:', response?.length || 0);
-
-    // Ensure response is an array
-    if (!Array.isArray(response)) {
-      console.error('Invalid response format:', response);
-      return NextResponse.json(
-        { error: 'Invalid response format from recipe API' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json(response);
+    return NextResponse.json(recipes);
   } catch (error) {
-    console.error('Error in API route:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch recipes' },
-      { status: 500 }
-    );
+    console.error('Error fetching recipes:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 } 
