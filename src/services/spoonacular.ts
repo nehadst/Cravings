@@ -54,7 +54,9 @@ export interface Recipe {
       step: string;
     }[];
   }[];
+  instructions?: string;
   cuisines: string[];
+  diets?: string[];
   glutenFree: boolean;
   dairyFree: boolean;
   vegetarian: boolean;

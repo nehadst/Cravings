@@ -82,83 +82,83 @@ export default function AccountForm() {
     <div className="space-y-8">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
-          <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Account Information</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Your account details</p>
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">Account Information</h2>
+            <p className="text-sm text-gray-500">Your account details</p>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Email Address
             </label>
-            <div className="w-full p-3 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 rounded-lg text-gray-700 dark:text-gray-300">
+            <div className="w-full p-3 bg-gray-100 border border-gray-300 rounded-lg text-gray-700">
               {session?.user?.email}
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Change Password</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Update your password</p>
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <h2 className="text-xl font-semibold text-gray-800">Change Password</h2>
+            <p className="text-sm text-gray-500">Update your password</p>
           </div>
 
           <div className="space-y-4">
             <div className="space-y-2">
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
                 Current Password
               </label>
               <input
                 type="password"
                 id="currentPassword"
                 {...register('currentPassword')}
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white text-gray-900"
               />
               {errors.currentPassword && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.currentPassword.message}</p>
+                <p className="text-sm text-red-600">{errors.currentPassword.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
                 New Password
               </label>
               <input
                 type="password"
                 id="newPassword"
                 {...register('newPassword')}
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white text-gray-900"
               />
               {errors.newPassword && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.newPassword.message}</p>
+                <p className="text-sm text-red-600">{errors.newPassword.message}</p>
               )}
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
                 Confirm New Password
               </label>
               <input
                 type="password"
                 id="confirmPassword"
                 {...register('confirmPassword')}
-                className="w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent bg-white text-gray-900"
               />
               {errors.confirmPassword && (
-                <p className="text-sm text-red-600 dark:text-red-400">{errors.confirmPassword.message}</p>
+                <p className="text-sm text-red-600">{errors.confirmPassword.message}</p>
               )}
             </div>
           </div>
         </div>
 
         {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+          <div className="p-4 bg-red-50 text-red-600 rounded-lg">
             {error}
           </div>
         )}
 
         {submitSuccess && (
-          <div className="p-4 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 rounded-lg">
+          <div className="p-4 bg-green-50 text-green-600 rounded-lg">
             Password updated successfully!
           </div>
         )}
@@ -166,15 +166,15 @@ export default function AccountForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Updating...' : 'Update Password'}
         </button>
       </form>
 
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
-        <h2 className="text-xl font-semibold text-red-600 dark:text-red-400 mb-4">Danger Zone</h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+      <div className="border-t border-gray-200 pt-6">
+        <h2 className="text-xl font-semibold text-red-600 mb-4">Danger Zone</h2>
+        <p className="text-sm text-gray-500 mb-4">
           Once you delete your account, there is no going back. Please be certain.
         </p>
         <button

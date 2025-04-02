@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import PageBackground from '@/components/PageBackground';
+import Image from 'next/image';
 
 interface SavedRecipe {
   id: string;
@@ -91,13 +93,13 @@ export default function SavedRecipesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
-      <header className="bg-white dark:bg-gray-800 shadow">
+    <PageBackground image="/recipe.jpg">
+      <header className="bg-white/80 backdrop-blur-sm shadow">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Your Saved Recipes</h1>
+          <h1 className="text-2xl font-bold text-gray-900">Your Saved Recipes</h1>
           <button 
             onClick={() => router.push('/recipes')}
-            className="flex items-center text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+            className="flex items-center text-gray-600 hover:text-gray-900"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -106,72 +108,72 @@ export default function SavedRecipesPage() {
           </button>
         </div>
       </header>
-
+      
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe) => (
-            <div 
-              key={recipe.id}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden"
-            >
-              <img 
-                src={recipe.image} 
-                alt={recipe.title}
-                className="w-full h-48 object-cover"
-              />
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                  {recipe.title}
-                </h2>
-                {recipe.ingredients && recipe.ingredients.length > 0 ? (
-                  <div className="mb-4">
-                    <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Ingredients:
-                    </h3>
-                    <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside">
-                      {recipe.ingredients.slice(0, 5).map((ing, index) => (
-                        <li key={index}>{ing.original}</li>
-                      ))}
-                      {recipe.ingredients.length > 5 && (
-                        <li className="list-none text-gray-500 italic mt-1">
-                          +{recipe.ingredients.length - 5} more ingredients
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                ) : (
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 italic">
-                    Ingredients list will be available when adding to grocery list
-                  </p>
-                )}
-                <button
-                  onClick={() => handleAddToGroceryList(recipe)}
-                  disabled={processingIngredients === recipe.id}
-                  className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
-                >
-                  {processingIngredients === recipe.id ? (
-                    'Processing...'
+        <div className="bg-gray-100 rounded-lg shadow p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recipes.map((recipe) => (
+              <div key={recipe.id} className="bg-white rounded-lg shadow overflow-hidden">
+                <div className="relative h-48">
+                  <Image
+                    src={recipe.image}
+                    alt={recipe.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h2 className="text-lg font-semibold text-gray-900 mb-2">{recipe.title}</h2>
+                  {recipe.ingredients && recipe.ingredients.length > 0 ? (
+                    <div className="mb-4">
+                      <h3 className="text-md font-medium text-gray-700 mb-2">
+                        Ingredients:
+                      </h3>
+                      <ul className="text-sm text-gray-600 list-disc list-inside">
+                        {recipe.ingredients.slice(0, 5).map((ing, index) => (
+                          <li key={index}>{ing.original}</li>
+                        ))}
+                        {recipe.ingredients.length > 5 && (
+                          <li className="list-none text-gray-500 italic mt-1">
+                            +{recipe.ingredients.length - 5} more ingredients
+                          </li>
+                        )}
+                      </ul>
+                    </div>
                   ) : (
-                    'Add Ingredients to Grocery List'
+                    <p className="text-sm text-gray-500 italic">
+                      Ingredients list will be available when adding to grocery list
+                    </p>
                   )}
-                </button>
+                  <button
+                    onClick={() => handleAddToGroceryList(recipe)}
+                    disabled={processingIngredients === recipe.id}
+                    className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                  >
+                    {processingIngredients === recipe.id ? (
+                      'Processing...'
+                    ) : (
+                      'Add Ingredients to Grocery List'
+                    )}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-
-        {recipes.length === 0 && (
-          <div className="text-center text-gray-500 dark:text-gray-400 mt-8">
-            <p>You haven't saved any recipes yet.</p>
-            <button
-              onClick={() => router.push('/recipes')}
-              className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Find Recipes
-            </button>
+            ))}
           </div>
-        )}
+
+          {recipes.length === 0 && (
+            <div className="text-center text-gray-500 mt-8">
+              <p>You haven't saved any recipes yet.</p>
+              <button
+                onClick={() => router.push('/recipes')}
+                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                Find Recipes
+              </button>
+            </div>
+          )}
+        </div>
       </main>
-    </div>
+    </PageBackground>
   );
 }

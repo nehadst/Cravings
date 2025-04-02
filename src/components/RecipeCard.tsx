@@ -72,7 +72,7 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
             className={`absolute top-2 right-2 p-2 rounded-full ${
               isSaved
                 ? 'bg-red-500 hover:bg-red-600'
-                : 'bg-gray-500 hover:bg-gray-600'
+                : 'bg-gray-1000 hover:bg-gray-600'
             } text-white transition-colors`}
           >
             {isSaving ? (

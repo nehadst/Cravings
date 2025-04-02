@@ -173,14 +173,14 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded-md">
+        <div className="p-4 bg-red-100 text-red-700 rounded-md">
           {error}
         </div>
       )}
 
       {/* Dietary Preferences */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Dietary Preferences
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -204,9 +204,9 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
                 name={name}
                 checked={preferences[name as keyof Preferences] as boolean}
                 onChange={handleChange}
-                className="rounded border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500"
+                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
-              <span className="text-gray-700 dark:text-gray-300">{label}</span>
+              <span className="text-gray-700">{label}</span>
             </label>
           ))}
         </div>
@@ -214,7 +214,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
 
       {/* Allergies */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Allergies
         </h2>
         <textarea
@@ -222,14 +222,14 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
           value={preferences.allergies}
           onChange={handleChange}
           placeholder="Enter your allergies (comma-separated)"
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+          className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"
           rows={3}
         />
       </div>
 
       {/* Nutritional Goals */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Nutritional Goals
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -240,7 +240,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
             { name: 'fatTarget', label: 'Fat (g)' },
           ].map(({ name, label }) => (
             <div key={name}>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              <label className="block text-sm font-medium text-gray-700">
                 {label}
               </label>
               <input
@@ -248,7 +248,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
                 name={name}
                 value={preferences[name as keyof Preferences] as number}
                 onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"
               />
             </div>
           ))}
@@ -257,12 +257,12 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
 
       {/* Cuisines and Ingredients */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
           Cuisines and Ingredients
         </h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Preferred Cuisines
             </label>
             <textarea
@@ -270,12 +270,12 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
               value={preferences.preferredCuisines}
               onChange={handleChange}
               placeholder="Enter your preferred cuisines (comma-separated)"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Preferred Ingredients
             </label>
             <textarea
@@ -283,12 +283,12 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
               value={preferences.preferredIngredients}
               onChange={handleChange}
               placeholder="Enter ingredients you want in your recipes (comma-separated)"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"
               rows={2}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            <label className="block text-sm font-medium text-gray-700">
               Disliked Ingredients
             </label>
             <textarea
@@ -296,7 +296,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
               value={preferences.dislikedIngredients}
               onChange={handleChange}
               placeholder="Enter ingredients you dislike (comma-separated)"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"
               rows={2}
             />
           </div>
