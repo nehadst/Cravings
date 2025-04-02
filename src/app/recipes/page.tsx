@@ -46,7 +46,7 @@ export default function RecipesPage() {
   const fetchRecipes = async () => {
     try {
       setIsFetchingMore(true);
-      const response = await fetch('/api/recipes');
+      const response = await fetch('/api/recipes?applyFilters=true');
       if (!response.ok) {
         throw new Error('Failed to fetch recipes');
       }

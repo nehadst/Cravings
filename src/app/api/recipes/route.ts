@@ -35,28 +35,33 @@ interface UserPreferences {
   proteinTarget: number | null;
   carbTarget: number | null;
   fatTarget: number | null;
+
+  intolerances?: string[];
+  cuisines?: string[];
+  savedRecipes?: string[];
 }
 
 interface SpoonacularRecipe {
   id: number;
   title: string;
-  image: string;
-  glutenFree: boolean;
-  dairyFree: boolean;
+  readyInMinutes: number;
+  servings: number;
+  image?: string;
   vegetarian: boolean;
   vegan: boolean;
+  glutenFree: boolean;
+  dairyFree: boolean;
   ketogenic: boolean;
   paleo: boolean;
-  lowFodmap: boolean;
-  extendedIngredients: {
-    id: number;
+  pescatarian: boolean;
+  carbs: number;
+  cuisines?: string[];
+  extendedIngredients: Array<{
     name: string;
-    amount: number;
-    unit: string;
-  }[];
+  }>;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -64,205 +69,113 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get user preferences
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { preferences: true },
-    });
+    // Get the URL and check if filters are requested
+    const url = new URL(request.url);
+    const applyFilters = url.searchParams.get('applyFilters') === 'true';
 
-    if (!user) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
-    }
-
-    // Parse preferences
-    const dietaryPreferences: string[] = [];
-    if (user.preferences?.isVegan) dietaryPreferences.push('vegan');
-    if (user.preferences?.isVegetarian) dietaryPreferences.push('vegetarian');
-    if (user.preferences?.isPescatarian) dietaryPreferences.push('pescatarian');
-    if (user.preferences?.isKeto) dietaryPreferences.push('ketogenic');
-    if (user.preferences?.isPaleo) dietaryPreferences.push('paleo');
-    if (user.preferences?.isGlutenFree) dietaryPreferences.push('gluten free');
-    if (user.preferences?.isDairyFree) dietaryPreferences.push('dairy free');
-    if (user.preferences?.isNutFree) dietaryPreferences.push('tree nuts');
-    if (user.preferences?.isHalal) dietaryPreferences.push('halal');
-    if (user.preferences?.isKosher) dietaryPreferences.push('kosher');
-    if (user.preferences?.isLowCarb) dietaryPreferences.push('low-carb');
-    if (user.preferences?.isLowFat) dietaryPreferences.push('low-fat');
-
-    // Add any additional dietary preferences from the string field
-    const additionalPreferences = user.preferences?.dietaryPreferences?.split(',').filter(Boolean) || [];
-    dietaryPreferences.push(...additionalPreferences);
-
-    const intolerances: string[] = user.preferences?.allergies?.split(',').filter(Boolean) || [];
-    const cuisines: string[] = user.preferences?.preferredCuisines?.split(',').filter(Boolean) || [];
-    const preferredIngredients: string[] = user.preferences?.preferredIngredients?.split(',').filter(Boolean) || [];
-    const dislikedIngredients: string[] = user.preferences?.dislikedIngredients?.split(',').filter(Boolean) || [];
-
-    // Get saved recipes to exclude them from recommendations
-    const savedRecipes = await prisma.savedRecipe.findMany({
-      where: { userId: user.id },
-      select: { recipeId: true }
-    });
-
-    const savedRecipeIds = savedRecipes.map(recipe => recipe.recipeId);
-
-    // Build query parameters for Spoonacular API
-    const params = new URLSearchParams();
-    params.append('apiKey', process.env.SPOONACULAR_API_KEY || '');
-    params.append('number', '50'); // Get more recipes to filter through
-    params.append('addRecipeInformation', 'true');
-    params.append('fillIngredients', 'true');
-    params.append('instructionsRequired', 'true');
-
-    // Add dietary preferences as strict requirements
-    if (dietaryPreferences.length > 0) {
-      const spoonacularDiets = dietaryPreferences.map((pref: string) => {
-        switch (pref) {
-          case 'Gluten-Free': return 'gluten free';
-          case 'Dairy-Free': return 'dairy free';
-          case 'Vegetarian': return 'vegetarian';
-          case 'Vegan': return 'vegan';
-          case 'Keto': return 'ketogenic';
-          case 'Paleo': return 'paleo';
-          case 'Low FODMAP': return 'fodmap friendly';
-          default: return pref.toLowerCase();
-        }
+    // Get user preferences if logged in
+    let userPreferences: UserPreferences | null = null;
+    if (session?.user?.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        include: { preferences: true }
       });
-      params.append('diet', spoonacularDiets.join(','));
+      userPreferences = user?.preferences as UserPreferences;
     }
 
-    // Add intolerances as strict requirements
-    if (intolerances.length > 0) {
-      params.append('intolerances', intolerances.join(','));
-    }
-
-    // Add cuisines
-    if (cuisines.length > 0) {
-      params.append('cuisine', cuisines.join(','));
-    }
-
-    // Exclude saved recipes
-    if (savedRecipeIds.length > 0) {
-      params.append('excludeRecipes', savedRecipeIds.join(','));
-    }
-
-    // If there are preferred ingredients, add a query to increase chances of getting relevant recipes
-    if (preferredIngredients.length > 0) {
-      params.append('query', preferredIngredients.join(' ')); // This will help bias results towards these ingredients
-    }
-
-    console.log('Fetching recipes with params:', params.toString());
-
-    // First get recipe IDs from complex search
-    const searchResponse = await fetch(
-      `https://api.spoonacular.com/recipes/complexSearch?${params.toString()}`
-    );
-
-    if (!searchResponse.ok) {
-      console.error('Spoonacular API error:', await searchResponse.text());
-      throw new Error('Failed to fetch recipes from Spoonacular');
-    }
-
-    const searchData = await searchResponse.json();
-    console.log('Received recipes:', searchData.results?.length || 0);
-
-    // Get full recipe information for each result
-    const recipePromises = (searchData.results || []).map(async (result: any) => {
-      const recipeResponse = await fetch(
-        `https://api.spoonacular.com/recipes/${result.id}/information?apiKey=${process.env.SPOONACULAR_API_KEY}`
-      );
-      if (!recipeResponse.ok) return null;
-      return recipeResponse.json();
+    // Build query parameters
+    const queryParams = new URLSearchParams({
+      apiKey: process.env.SPOONACULAR_API_KEY || '',
+      number: '50',
+      addRecipeInformation: 'true',
+      fillIngredients: 'true',
+      instructionsRequired: 'true'
     });
 
-    const recipes = (await Promise.all(recipePromises)).filter(Boolean);
-    
-    // Double-check dietary preferences and ingredients
-    const filteredRecipes = recipes.filter((recipe: SpoonacularRecipe) => {
-      // Check dietary preferences first
-      const meetsPreferences = dietaryPreferences.every((preference: string) => {
-        switch (preference.toLowerCase()) {
-          case 'gluten free':
-            return recipe.glutenFree;
-          case 'dairy free':
-            return recipe.dairyFree;
-          case 'vegetarian':
-            return recipe.vegetarian;
-          case 'vegan':
-            return recipe.vegan;
-          case 'ketogenic':
-            return recipe.ketogenic;
-          case 'paleo':
-            return recipe.paleo;
-          case 'low fodmap':
-            return recipe.lowFodmap;
-          default:
-            return true; // Accept recipes if preference is not recognized
-        }
-      });
+    // Only add filters if applyFilters is true and user has preferences
+    if (applyFilters && userPreferences) {
+      // Add dietary preferences
+      if (userPreferences.isVegetarian) queryParams.append('diet', 'vegetarian');
+      if (userPreferences.isVegan) queryParams.append('diet', 'vegan');
+      if (userPreferences.isGlutenFree) queryParams.append('diet', 'gluten free');
+      if (userPreferences.isDairyFree) queryParams.append('diet', 'dairy free');
+      if (userPreferences.isLowCarb) queryParams.append('diet', 'low carb');
+      if (userPreferences.isKeto) queryParams.append('diet', 'ketogenic');
+      if (userPreferences.isPaleo) queryParams.append('diet', 'paleo');
+      if (userPreferences.isPescatarian) queryParams.append('diet', 'pescatarian');
 
-      if (!meetsPreferences) {
-        console.log('Recipe failed preferences check:', recipe.title, 'Preferences:', dietaryPreferences, 'Recipe flags:', {
-          glutenFree: recipe.glutenFree,
-          dairyFree: recipe.dairyFree,
-          vegetarian: recipe.vegetarian,
-          vegan: recipe.vegan,
-          ketogenic: recipe.ketogenic,
-          paleo: recipe.paleo,
-          lowFodmap: recipe.lowFodmap
-        });
-        return false;
+      // Add intolerances
+      if (userPreferences.intolerances && userPreferences.intolerances.length > 0) {
+        queryParams.append('intolerances', userPreferences.intolerances.join(','));
       }
 
-      // Get all ingredients and their possible variations
-      const recipeIngredientTexts = recipe.extendedIngredients?.map(ing => {
-        const variations = [
-          ing.name.toLowerCase(),
-          ing.name.toLowerCase().replace(/\s+/g, ''), // no spaces
-          ...ing.name.toLowerCase().split(/[\s,-]+/) // split on spaces, commas, and hyphens
-        ];
-        return variations;
-      }).flat() || [];
+      // Add cuisines
+      if (userPreferences.cuisines && userPreferences.cuisines.length > 0) {
+        queryParams.append('cuisine', userPreferences.cuisines.join(','));
+      }
 
-      // Check for preferred ingredients - more flexible matching
-      const hasRequiredIngredients = preferredIngredients.length === 0 || 
-        preferredIngredients.every((ingredient: string) => {
-          const searchTerm = ingredient.toLowerCase().trim();
-          return recipeIngredientTexts.some(text => 
-            text.includes(searchTerm) || searchTerm.includes(text)
+      // Add saved recipes to exclude
+      if (userPreferences.savedRecipes?.length) {
+        queryParams.append('excludeRecipes', userPreferences.savedRecipes.join(','));
+      }
+    }
+
+    console.log('Fetching recipes with params:', queryParams.toString());
+    const response = await fetch(`https://api.spoonacular.com/recipes/random?${queryParams.toString()}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to fetch recipes');
+    }
+
+    console.log('Received recipes:', data.recipes.length);
+
+    // Only filter recipes if applyFilters is true and user has preferences
+    let filteredRecipes = data.recipes as SpoonacularRecipe[];
+    if (applyFilters && userPreferences) {
+      filteredRecipes = data.recipes.filter((recipe: SpoonacularRecipe) => {
+        // Skip recipes without required fields
+        if (!recipe.id || !recipe.title || !recipe.readyInMinutes || !recipe.servings) {
+          return false;
+        }
+
+        // Check dietary restrictions
+        if (userPreferences.isVegetarian && !recipe.vegetarian) return false;
+        if (userPreferences.isVegan && !recipe.vegan) return false;
+        if (userPreferences.isGlutenFree && !recipe.glutenFree) return false;
+        if (userPreferences.isDairyFree && !recipe.dairyFree) return false;
+        if (userPreferences.isLowCarb && recipe.carbs > 50) return false;
+        if (userPreferences.isKeto && recipe.carbs > 20) return false;
+        if (userPreferences.isPaleo && !recipe.paleo) return false;
+        if (userPreferences.isPescatarian && !recipe.pescatarian) return false;
+
+        // Check intolerances
+        if (userPreferences.intolerances && userPreferences.intolerances.length > 0) {
+          const hasIntolerance = recipe.extendedIngredients.some(ingredient =>
+            userPreferences.intolerances.some(intolerance =>
+              ingredient.name.toLowerCase().includes(intolerance.toLowerCase())
+            )
           );
-        });
+          if (hasIntolerance) return false;
+        }
 
-      if (!hasRequiredIngredients) {
-        console.log('Recipe failed ingredients check:', recipe.title, 'Required:', preferredIngredients, 'Has:', recipeIngredientTexts);
-        return false;
-      }
+        // Check cuisines
+        if (userPreferences.cuisines && userPreferences.cuisines.length > 0) {
+          const recipeCuisines = recipe.cuisines || [];
+          const hasMatchingCuisine = recipeCuisines.some(cuisine =>
+            userPreferences.cuisines.some(prefCuisine =>
+              cuisine.toLowerCase().includes(prefCuisine.toLowerCase())
+            )
+          );
+          if (!hasMatchingCuisine) return false;
+        }
 
-      // Check for disliked ingredients - more flexible matching
-      const hasDislikedIngredient = dislikedIngredients.some(disliked => {
-        const searchTerm = disliked.toLowerCase().trim();
-        return recipeIngredientTexts.some(text => 
-          text.includes(searchTerm) || searchTerm.includes(text)
-        );
+        return true;
       });
-
-      if (hasDislikedIngredient) return false;
-
-      // Check for allergic ingredients - more flexible matching
-      const hasAllergicIngredient = intolerances.some(allergy => {
-        const searchTerm = allergy.toLowerCase().trim();
-        return recipeIngredientTexts.some(text => 
-          text.includes(searchTerm) || searchTerm.includes(text)
-        );
-      });
-
-      return !hasAllergicIngredient;
-    });
+    }
 
     console.log('Filtered recipes:', filteredRecipes.length);
-
-    // Return only the first 10 filtered recipes
-    return NextResponse.json(filteredRecipes.slice(0, 10));
+    return NextResponse.json(filteredRecipes);
   } catch (error) {
     console.error('Error fetching recipes:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
