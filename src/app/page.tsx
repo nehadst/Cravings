@@ -22,14 +22,28 @@ export default function Home() {
 
   return (
     <div className="grid grid-rows-[auto_1fr_auto] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <header className="w-full flex justify-end">
+      <header className="w-full flex justify-end items-center">
         {isAuthenticated && (
-          <Link
-            href="/preferences"
-            className="text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mr-4"
-          >
-            Recipes
-          </Link>
+          <div className="flex gap-4 mr-4">
+            <Link
+              href="/preferences"
+              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
+            >
+              Recipes
+            </Link>
+            <Link
+              href="/grocery-list"
+              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
+            >
+              Grocery List
+            </Link>
+            <Link
+              href="/saved-recipes"
+              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm h-10 px-4"
+            >
+              Saved Recipes
+            </Link>
+          </div>
         )}
         {isAuthenticated ? (
           <>
@@ -125,7 +139,7 @@ export default function Home() {
       </main>
       
       <footer className="w-full text-center text-gray-600 dark:text-gray-400">
-        <p>© 2024 Cravings. All rights reserved.</p>
+        <p>© 2025 Cravings. All rights reserved.</p>
       </footer>
     </div>
   );
