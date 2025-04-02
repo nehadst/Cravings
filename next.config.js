@@ -1,15 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'img.spoonacular.com',
-        port: '',
-        pathname: '/recipes/**',
-      },
-    ],
+    domains: ['img.spoonacular.com', 'spoonacular.com'],
+  },
+  experimental: {
+    serverActions: true,
   },
 };
 
-module.exports = nextConfig; 
+export default nextConfig; 
