@@ -70,21 +70,51 @@ export default function RecipesPage() {
 
   const handleSwipeRight = async () => {
     try {
-      await fetch('/api/recipes/save', {
+      const currentRecipe = recipes[currentIndex];
+      
+      // Terminal log: Attempting to save recipe
+      console.log('\n[SAVE RECIPE] Attempting to save recipe:');
+      console.log('----------------------------------------');
+      console.log({
+        currentIndex,
+        recipeId: currentRecipe.id,
+        title: currentRecipe.title
+      });
+
+      const response = await fetch('/api/recipes/save', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(recipes[currentIndex]),
+        body: JSON.stringify({
+          recipeId: currentRecipe.id,
+          title: currentRecipe.title,
+          image: currentRecipe.image
+        }),
       });
-    } catch (error) {
-      console.error('Error saving recipe:', error);
-    }
 
-    if (currentIndex >= recipes.length - 3 && !isFetchingMore) {
-      fetchRecipes();
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Failed to save recipe: ${data.error || 'Unknown error'}`);
+      }
+
+      // Terminal log: Save successful
+      console.log('\n[SAVE RECIPE] Recipe saved successfully:');
+      console.log('----------------------------------------');
+      console.log(data);
+
+      if (currentIndex >= recipes.length - 3 && !isFetchingMore) {
+        fetchRecipes();
+      }
+      setCurrentIndex(prev => prev + 1);
+    } catch (error) {
+      // Terminal log: Error saving recipe
+      console.log('\n[SAVE RECIPE] ERROR:');
+      console.log('----------------------------------------');
+      console.error('Error saving recipe:', error);
+      throw error;
     }
-    setCurrentIndex(prev => prev + 1);
   };
 
   if (isLoading && recipes.length === 0) {

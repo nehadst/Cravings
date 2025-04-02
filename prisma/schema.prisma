@@ -19,6 +19,8 @@ model User {
   updatedAt        DateTime @updatedAt
   preferences      UserPreferences?
   savedRecipes     SavedRecipe[]
+  groceryList      GroceryList?
+  inventory        InventoryItem[]
 }
 
 model UserPreferences {
@@ -69,4 +71,28 @@ model SavedRecipe {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, recipeId])
+}
+
+model GroceryList {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  items     String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model InventoryItem {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  quantity    Int
+  unit        String
+  category    String
+  expiryDate  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 } 

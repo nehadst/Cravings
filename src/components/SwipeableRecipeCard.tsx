@@ -48,10 +48,22 @@ export default function SwipeableRecipeCard({
     setIsDragging(false);
     const dragDistance = info.point.x - dragStart.x;
 
+    // Terminal log: Swipe event
+    console.log('\n[SWIPE EVENT] Detected:');
+    console.log('----------------------------------------');
+    console.log({
+      dragDistance,
+      threshold: 100,
+      isRightSwipe: dragDistance > 100,
+      isLeftSwipe: dragDistance < -100
+    });
+
     if (Math.abs(dragDistance) > 100) {
       if (dragDistance > 0) {
+        console.log('[SWIPE EVENT] Right swipe detected, saving recipe');
         onSwipeRight();
       } else {
+        console.log('[SWIPE EVENT] Left swipe detected, skipping recipe');
         onSwipeLeft();
       }
     }
