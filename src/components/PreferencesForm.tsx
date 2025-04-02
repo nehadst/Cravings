@@ -28,6 +28,7 @@ interface Preferences {
   
   // Additional information
   preferredCuisines: string;
+  preferredIngredients: string;
   dislikedIngredients: string;
 }
 
@@ -57,6 +58,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
     carbTarget: 250,
     fatTarget: 70,
     preferredCuisines: '',
+    preferredIngredients: '',
     dislikedIngredients: '',
   });
 
@@ -71,25 +73,26 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
         
         // Convert the API response to our form format
         setPreferences({
-          isVegan: data.dietaryPreferences.includes('vegan'),
-          isVegetarian: data.dietaryPreferences.includes('vegetarian'),
-          isPescatarian: data.dietaryPreferences.includes('pescatarian'),
-          isKeto: data.dietaryPreferences.includes('ketogenic'),
-          isPaleo: data.dietaryPreferences.includes('paleo'),
-          isGlutenFree: data.dietaryPreferences.includes('gluten free'),
-          isDairyFree: data.dietaryPreferences.includes('dairy free'),
-          isNutFree: data.dietaryPreferences.includes('tree nuts'),
-          isHalal: data.dietaryPreferences.includes('halal'),
-          isKosher: data.dietaryPreferences.includes('kosher'),
-          isLowCarb: data.dietaryPreferences.includes('low-carb'),
-          isLowFat: data.dietaryPreferences.includes('low-fat'),
-          allergies: data.allergies.join(','),
-          calorieTarget: data.nutritionalGoals.calories,
-          proteinTarget: data.nutritionalGoals.protein,
-          carbTarget: data.nutritionalGoals.carbs,
-          fatTarget: data.nutritionalGoals.fats,
-          preferredCuisines: data.cuisines.join(','),
-          dislikedIngredients: data.dislikedIngredients.join(','),
+          isVegan: data.dietaryPreferences?.includes('vegan') || false,
+          isVegetarian: data.dietaryPreferences?.includes('vegetarian') || false,
+          isPescatarian: data.dietaryPreferences?.includes('pescatarian') || false,
+          isKeto: data.dietaryPreferences?.includes('ketogenic') || false,
+          isPaleo: data.dietaryPreferences?.includes('paleo') || false,
+          isGlutenFree: data.dietaryPreferences?.includes('gluten free') || false,
+          isDairyFree: data.dietaryPreferences?.includes('dairy free') || false,
+          isNutFree: data.dietaryPreferences?.includes('tree nuts') || false,
+          isHalal: data.dietaryPreferences?.includes('halal') || false,
+          isKosher: data.dietaryPreferences?.includes('kosher') || false,
+          isLowCarb: data.dietaryPreferences?.includes('low-carb') || false,
+          isLowFat: data.dietaryPreferences?.includes('low-fat') || false,
+          allergies: (data.allergies || []).join(','),
+          calorieTarget: data.nutritionalGoals?.calories || 2000,
+          proteinTarget: data.nutritionalGoals?.protein || 50,
+          carbTarget: data.nutritionalGoals?.carbs || 250,
+          fatTarget: data.nutritionalGoals?.fats || 70,
+          preferredCuisines: (data.cuisines || []).join(','),
+          preferredIngredients: (data.preferredIngredients || []).join(','),
+          dislikedIngredients: (data.dislikedIngredients || []).join(','),
         });
       } catch (err) {
         console.error('Error fetching preferences:', err);
@@ -132,6 +135,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
           fats: preferences.fatTarget
         },
         cuisines: preferences.preferredCuisines.split(',').map(c => c.trim()).filter(Boolean),
+        preferredIngredients: preferences.preferredIngredients.split(',').map(i => i.trim()).filter(Boolean),
         dislikedIngredients: preferences.dislikedIngredients.split(',').map(i => i.trim()).filter(Boolean)
       };
 
@@ -251,7 +255,7 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
         </div>
       </div>
 
-      {/* Cuisines and Disliked Ingredients */}
+      {/* Cuisines and Ingredients */}
       <div>
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Cuisines and Ingredients
@@ -266,6 +270,19 @@ export default function PreferencesForm({ onSuccess }: PreferencesFormProps) {
               value={preferences.preferredCuisines}
               onChange={handleChange}
               placeholder="Enter your preferred cuisines (comma-separated)"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
+              rows={2}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Preferred Ingredients
+            </label>
+            <textarea
+              name="preferredIngredients"
+              value={preferences.preferredIngredients}
+              onChange={handleChange}
+              placeholder="Enter ingredients you want in your recipes (comma-separated)"
               className="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"
               rows={2}
             />

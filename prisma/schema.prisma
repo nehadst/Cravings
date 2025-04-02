@@ -23,38 +23,39 @@ model User {
 
 model UserPreferences {
   id                  String   @id @default(cuid())
-  userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id])
-  
-  // Dietary preferences
-  isVegan             Boolean  @default(false)
-  isVegetarian        Boolean  @default(false)
-  isPescatarian       Boolean  @default(false)
-  isKeto              Boolean  @default(false)
-  isPaleo             Boolean  @default(false)
-  isGlutenFree        Boolean  @default(false)
-  isDairyFree         Boolean  @default(false)
-  isNutFree           Boolean  @default(false)
-  isHalal             Boolean  @default(false)
-  isKosher            Boolean  @default(false)
-  isLowCarb           Boolean  @default(false)
-  isLowFat            Boolean  @default(false)
-  
-  // Allergies - stored as comma-separated string
-  allergies           String
-  
-  // Nutritional goals
-  calorieTarget       Int?
-  proteinTarget       Int?
-  carbTarget          Int?
-  fatTarget           Int?
-  
-  // Additional information
-  preferredCuisines   String
-  dislikedIngredients String
-  
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Boolean dietary preferences
+  isVegan            Boolean  @default(false)
+  isVegetarian       Boolean  @default(false)
+  isPescatarian      Boolean  @default(false)
+  isKeto             Boolean  @default(false)
+  isPaleo            Boolean  @default(false)
+  isGlutenFree       Boolean  @default(false)
+  isDairyFree        Boolean  @default(false)
+  isNutFree          Boolean  @default(false)
+  isHalal            Boolean  @default(false)
+  isKosher           Boolean  @default(false)
+  isLowCarb          Boolean  @default(false)
+  isLowFat           Boolean  @default(false)
+  
+  // String preferences
+  dietaryPreferences  String?
+  allergies           String?
+  preferredCuisines   String?
+  preferredIngredients String?
+  dislikedIngredients String?
+  
+  // Nutritional goals
+  calorieTarget       Int?     @default(2000)
+  proteinTarget       Int?     @default(50)
+  carbTarget          Int?     @default(250)
+  fatTarget           Int?     @default(70)
+
+  @@map("user_preferences")
 }
 
 model SavedRecipe {
