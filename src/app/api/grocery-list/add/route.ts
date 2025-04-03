@@ -16,19 +16,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { recipeId } = await request.json();
-
-    // Fetch recipe information from Spoonacular
-    const recipeResponse = await fetch(
-      `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${process.env.SPOONACULAR_API_KEY}`
-    );
-
-    if (!recipeResponse.ok) {
-      throw new Error('Failed to fetch recipe information');
-    }
-
-    const recipeInfo = await recipeResponse.json();
-    const ingredients = recipeInfo.extendedIngredients.map((ing: any) => ing.original);
+    const { recipeId, ingredients } = await request.json();
 
     // Get user's existing grocery list
     const user = await prisma.user.findUnique({
@@ -42,9 +30,34 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    let newIngredients: string[] = [];
+
+    // If recipeId is provided, fetch ingredients from Spoonacular
+    if (recipeId) {
+      const recipeResponse = await fetch(
+        `https://api.spoonacular.com/recipes/${recipeId}/information?apiKey=${process.env.SPOONACULAR_API_KEY}`
+      );
+
+      if (!recipeResponse.ok) {
+        throw new Error('Failed to fetch recipe information');
+      }
+
+      const recipeInfo = await recipeResponse.json();
+      newIngredients = recipeInfo.extendedIngredients.map((ing: any) => ing.original);
+    } 
+    // If ingredients are provided directly, use those
+    else if (ingredients) {
+      newIngredients = ingredients.split('\n').filter(Boolean);
+    } else {
+      return NextResponse.json(
+        { error: 'Either recipeId or ingredients are required' },
+        { status: 400 }
+      );
+    }
+
     // Combine existing ingredients with new ones
     const existingIngredients = user.groceryList?.items?.split('\n').filter(Boolean) || [];
-    const allIngredients = [...existingIngredients, ...ingredients];
+    const allIngredients = [...existingIngredients, ...newIngredients];
 
     // Use OpenAI to process and organize the ingredients
     const prompt = `

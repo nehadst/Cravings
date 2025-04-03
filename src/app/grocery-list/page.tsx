@@ -16,6 +16,7 @@ export default function GroceryListPage() {
   const [isAddingItem, setIsAddingItem] = useState(false);
   const [ingredientsToProcess, setIngredientsToProcess] = useState('');
   const [isProcessingIngredients, setIsProcessingIngredients] = useState(false);
+  const [newItem, setNewItem] = useState('');
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -96,19 +97,32 @@ export default function GroceryListPage() {
     try {
       setIsProcessingIngredients(true);
       
-      // Process ingredients
-      const processedItems = ingredientsToProcess.split('\n').map(item => item.trim()).filter(item => item.length > 0);
-      const newItems = [...new Set([...items.split('\n'), ...processedItems])];
-      setItems(newItems.join('\n'));
-
-      // Clear the ingredients in the database
-      const response = await fetch('/api/grocery-list/clear', {
+      // Process ingredients with OpenAI
+      const response = await fetch('/api/grocery-list/add', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ingredients: ingredientsToProcess }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to clear grocery list');
+        throw new Error('Failed to process ingredients');
       }
+
+      const data = await response.json();
+      
+      // Update the grocery list with the processed ingredients
+      setItems(data.groceryList);
+      
+      // Update the database with the new list
+      await fetch('/api/grocery-list/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: data.groceryList }),
+      });
 
       alert('Ingredients processed and added to grocery list!');
       setIngredientsToProcess(''); // Clear the input after processing
@@ -117,6 +131,15 @@ export default function GroceryListPage() {
       alert('Failed to process ingredients. Please try again.');
     } finally {
       setIsProcessingIngredients(false);
+    }
+  };
+
+  const handleAddItem = () => {
+    if (newItem.trim()) {
+      const updatedItems = items ? `${items}\n${newItem.trim()}` : newItem.trim();
+      setItems(updatedItems);
+      setNewItem('');
+      setIsAddingItem(false);
     }
   };
 
@@ -154,7 +177,35 @@ export default function GroceryListPage() {
       </header>
       
       <main className="container mx-auto px-4 py-8">
-        <div className="bg-gray-100 rounded-lg shadow p-6 md:p-8">
+        <div className="bg-white rounded-lg shadow p-6 md:p-8">
+          {/* Grocery List Textarea */}
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-2">Your Grocery List</h2>
+            <textarea
+              value={items}
+              onChange={(e) => setItems(e.target.value)}
+              placeholder="Your grocery list will appear here..."
+              className="w-full p-4 rounded-md border border-gray-300 bg-white text-gray-900 min-h-[200px]"
+              rows={10}
+            />
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={handleUpdateList}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                Save List
+              </button>
+              <button
+                onClick={handleSendList}
+                disabled={isSending || !items.trim()}
+                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+              >
+                {isSending ? 'Sending...' : 'Send to Email'}
+              </button>
+            </div>
+          </div>
+
+          {/* Add Item Section */}
           <div className="mb-6 space-y-4">
             <button
               onClick={() => setIsAddingItem(true)}
@@ -162,6 +213,27 @@ export default function GroceryListPage() {
             >
               Add New Item
             </button>
+
+            {isAddingItem && (
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={newItem}
+                    onChange={(e) => setNewItem(e.target.value)}
+                    placeholder="Enter item name"
+                    className="flex-1 p-2 rounded-md border border-gray-300 bg-white text-gray-900"
+                    onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
+                  />
+                  <button
+                    onClick={handleAddItem}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="mt-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">Process Multiple Ingredients</h2>
@@ -174,10 +246,10 @@ export default function GroceryListPage() {
               />
               <button
                 onClick={handleProcessIngredients}
-                disabled={isProcessingIngredients}
+                disabled={isProcessingIngredients || !ingredientsToProcess.trim()}
                 className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {isProcessingIngredients ? 'Processing...' : 'Process Ingredients'}
+                {isProcessingIngredients ? 'Processing...' : 'Process with AI'}
               </button>
             </div>
           </div>
