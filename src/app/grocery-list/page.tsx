@@ -328,7 +328,7 @@ export default function GroceryListPage() {
                   disabled={isSending || !items.trim()}
                   className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
                 >
-                  {isSending ? 'Sending...' : 'Send to Email'}
+                  {isSending ? 'Sending...' : 'Let us Go Shopping!'}
                 </button>
               </div>
             </div>
