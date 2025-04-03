@@ -8,7 +8,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "verify": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --project tsconfig.node.json src/tests/run-verification.ts"
+    "generate-test-data": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --project tsconfig.node.json scripts/generate-test-data.ts",
+    "run-verification-test": "NODE_OPTIONS=\"--loader ts-node/esm\" ts-node --project tsconfig.node.json scripts/run-verification-test.ts",
+    "verify": "npm run generate-test-data && npm run run-verification-test"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
@@ -19,6 +21,8 @@
     "@types/nodemailer": "^6.4.17",
     "@types/react-swipeable": "^5.2.0",
     "bcryptjs": "^3.0.2",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "emailjs-com": "^3.2.0",
     "framer-motion": "^12.6.2",
     "next": "15.2.3",

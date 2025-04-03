@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,64 +8,93 @@ datasource db {
 }
 
 model User {
-  id               String   @id @default(cuid())
-  email            String   @unique
-  password         String
-  name             String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  preferences      UserPreferences?
-  savedRecipes     SavedRecipe[]
-  groceryList      GroceryList?
-  inventory        InventoryItem[]
+  id              String           @id @default(cuid())
+  email           String           @unique
+  password        String
+  name            String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  emailVerified   DateTime?
+  image           String?
+  accounts        Account[]
+  groceryList     GroceryList?
+  inventory       InventoryItem[]
+  savedRecipes    SavedRecipe[]
+  scheduledEmails ScheduledEmail[]
+  sessions        Session[]
+  preferences     UserPreferences?
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model UserPreferences {
-  id                  String   @id @default(cuid())
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
-  userId              String   @unique
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  // Boolean dietary preferences
-  isVegan            Boolean  @default(false)
-  isVegetarian       Boolean  @default(false)
-  isPescatarian      Boolean  @default(false)
-  isKeto             Boolean  @default(false)
-  isPaleo            Boolean  @default(false)
-  isGlutenFree       Boolean  @default(false)
-  isDairyFree        Boolean  @default(false)
-  isNutFree          Boolean  @default(false)
-  isHalal            Boolean  @default(false)
-  isKosher           Boolean  @default(false)
-  isLowCarb          Boolean  @default(false)
-  isLowFat           Boolean  @default(false)
-  
-  // String preferences
-  dietaryPreferences  String?
-  allergies           String?
-  preferredCuisines   String?
+  id                   String   @id @default(cuid())
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  userId               String   @unique
+  isVegan              Boolean  @default(false)
+  isVegetarian         Boolean  @default(false)
+  isPescatarian        Boolean  @default(false)
+  isKeto               Boolean  @default(false)
+  isPaleo              Boolean  @default(false)
+  isGlutenFree         Boolean  @default(false)
+  isDairyFree          Boolean  @default(false)
+  isNutFree            Boolean  @default(false)
+  isHalal              Boolean  @default(false)
+  isKosher             Boolean  @default(false)
+  isLowCarb            Boolean  @default(false)
+  isLowFat             Boolean  @default(false)
+  dietaryPreferences   String?
+  allergies            String?
+  preferredCuisines    String?
   preferredIngredients String?
-  dislikedIngredients String?
-  
-  // Nutritional goals
-  calorieTarget       Int?     @default(2000)
-  proteinTarget       Int?     @default(50)
-  carbTarget          Int?     @default(250)
-  fatTarget           Int?     @default(70)
+  dislikedIngredients  String?
+  calorieTarget        Int?     @default(2000)
+  proteinTarget        Int?     @default(50)
+  carbTarget           Int?     @default(250)
+  fatTarget            Int?     @default(70)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
 }
 
 model SavedRecipe {
   id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   recipeId  Int
   title     String
   image     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isCompliant Boolean @default(true)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, recipeId])
 }
@@ -77,22 +103,34 @@ model GroceryList {
   id        String   @id @default(cuid())
   userId    String   @unique
   items     String?
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model InventoryItem {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  name        String
-  quantity    Int
-  unit        String
-  category    String
-  expiryDate  DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String    @id @default(cuid())
+  userId     String
+  name       String
+  quantity   Int
+  unit       String
+  category   String
+  expiryDate DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  user       User      @relation(fields: [userId], references: [id])
 
   @@index([userId])
-} 
+}
+
+model ScheduledEmail {
+  id           String   @id @default(cuid())
+  userId       String
+  emailType    String
+  scheduledFor DateTime
+  status       String   @default("PENDING")
+  data         Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

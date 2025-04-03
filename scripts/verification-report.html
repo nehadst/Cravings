@@ -1,0 +1,1172 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Verification Test Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .summary {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    .user-section {
+      margin-bottom: 30px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 15px;
+    }
+    .success {
+      color: #28a745;
+    }
+    .non-compliant {
+      color: #ffc107;
+    }
+    .missed {
+      color: #dc3545;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+    .stat-item {
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Recipe Verification Test Report</h1>
+    <p>Generated on: 4/2/2025, 11:37:57 PM</p>
+    
+    <div class="summary">
+      <h2>Summary</h2>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-value">10</div>
+          <div>Users Tested</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">1000</div>
+          <div>Total Recipes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">850</div>
+          <div>Compliant Recipes</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">150</div>
+          <div>Actual Non-Compliant</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">150</div>
+          <div>Caught by System</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100.00%</div>
+          <div>System Effectiveness</div>
+        </div>
+      </div>
+    </div>
+    
+    <h2>User Results</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Recipes Tested</th>
+          <th>Compliant</th>
+          <th>Actual Non-Compliant</th>
+          <th>Caught by System</th>
+          <th>System Effectiveness</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>test-user-1@example.com</td>
+            <td>100</td>
+            <td class="success">50</td>
+            <td class="non-compliant">50</td>
+            <td class="success">50</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-2@example.com</td>
+            <td>100</td>
+            <td class="success">50</td>
+            <td class="non-compliant">50</td>
+            <td class="success">50</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-3@example.com</td>
+            <td>100</td>
+            <td class="success">50</td>
+            <td class="non-compliant">50</td>
+            <td class="success">50</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-4@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-5@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-6@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-7@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-8@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-9@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+          <tr>
+            <td>test-user-10@example.com</td>
+            <td>100</td>
+            <td class="success">100</td>
+            <td class="non-compliant">0</td>
+            <td class="success">0</td>
+            <td>100.00%</td>
+          </tr>
+        
+      </tbody>
+    </table>
+    
+    <h2>Non-Compliant Recipes</h2>
+    
+        <div class="user-section">
+          <h3>User: test-user-1@example.com</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Recipe Title</th>
+                <th>Restrictions</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 2</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 4</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 6</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 8</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 10</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 12</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 14</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 16</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 18</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 20</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 22</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 24</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 26</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 28</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 30</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 32</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 34</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 36</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 38</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 40</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 42</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 44</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 46</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 48</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 50</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 52</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 54</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 56</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 58</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 60</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 62</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 64</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 66</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 68</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 70</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 72</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 74</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 76</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 78</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 80</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 82</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 84</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 86</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 88</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 90</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 92</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 94</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 96</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 98</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 100</td>
+                  <td>isVegan, isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      
+        <div class="user-section">
+          <h3>User: test-user-2@example.com</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Recipe Title</th>
+                <th>Restrictions</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 102</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 104</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 106</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 108</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 110</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 112</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 114</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 116</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 118</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 120</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 122</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 124</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 126</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 128</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 130</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 132</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 134</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 136</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 138</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 140</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 142</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 144</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 146</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 148</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 150</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 152</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 154</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 156</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 158</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 160</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 162</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 164</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 166</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 168</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 170</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 172</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 174</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 176</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 178</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 180</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 182</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 184</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 186</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 188</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 190</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 192</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 194</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 196</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 198</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 200</td>
+                  <td>isVegetarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      
+        <div class="user-section">
+          <h3>User: test-user-3@example.com</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Recipe Title</th>
+                <th>Restrictions</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 202</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 204</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 206</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 208</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 210</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 212</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 214</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 216</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 218</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 220</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 222</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 224</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 226</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 228</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 230</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 232</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 234</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 236</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 238</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 240</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 242</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 244</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 246</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 248</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 250</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 252</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 254</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 256</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 258</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 260</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 262</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 264</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 266</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 268</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 270</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 272</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 274</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 276</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 278</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 280</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 282</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 284</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 286</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 288</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 290</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 292</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 294</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 296</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 298</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+                <tr>
+                  <td>Chicken Stir Fry Variation 300</td>
+                  <td>isPescatarian</td>
+                  <td class="success">Caught</td>
+                </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      
+  </div>
+</body>
+</html>
+  

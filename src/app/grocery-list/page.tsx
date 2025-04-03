@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { sendGroceryListEmail } from '@/services/emailjs';
+import { sendGroceryListEmail } from '@/services/emailjs-client';
 import PageBackground from '@/components/PageBackground';
+import { format } from 'date-fns';
 
 export default function GroceryListPage() {
   const router = useRouter();
@@ -17,12 +18,20 @@ export default function GroceryListPage() {
   const [ingredientsToProcess, setIngredientsToProcess] = useState('');
   const [isProcessingIngredients, setIsProcessingIngredients] = useState(false);
   const [newItem, setNewItem] = useState('');
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState('');
+  const [scheduledTime, setScheduledTime] = useState('');
+  const [scheduledEmails, setScheduledEmails] = useState<any[]>([]);
+  const [isLoadingScheduled, setIsLoadingScheduled] = useState(false);
+  const [isProcessingScheduled, setIsProcessingScheduled] = useState(false);
+  const [isSubmittingSchedule, setIsSubmittingSchedule] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     } else if (status === 'authenticated') {
       fetchGroceryList();
+      fetchScheduledEmails();
     }
   }, [status, router]);
 
@@ -39,6 +48,22 @@ export default function GroceryListPage() {
       console.error('Error fetching grocery list:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchScheduledEmails = async () => {
+    try {
+      setIsLoadingScheduled(true);
+      const response = await fetch('/api/grocery-list/scheduled');
+      if (!response.ok) {
+        throw new Error('Failed to fetch scheduled emails');
+      }
+      const data = await response.json();
+      setScheduledEmails(data.scheduledEmails || []);
+    } catch (err) {
+      console.error('Error fetching scheduled emails:', err);
+    } finally {
+      setIsLoadingScheduled(false);
     }
   };
 
@@ -93,6 +118,78 @@ export default function GroceryListPage() {
     }
   };
 
+  const handleScheduleEmail = async () => {
+    try {
+      setIsSubmittingSchedule(true);
+      
+      if (!scheduledDate || !scheduledTime) {
+        alert('Please select both date and time for scheduling');
+        return;
+      }
+
+      const response = await fetch('/api/grocery-list/schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          scheduledDate, 
+          scheduledTime 
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to schedule email');
+      }
+
+      const data = await response.json();
+      alert(`Grocery list email scheduled for ${data.scheduledFor} EST`);
+      
+      // Refresh scheduled emails list
+      fetchScheduledEmails();
+      
+      // Reset form
+      setScheduledDate('');
+      setScheduledTime('');
+      setIsScheduling(false);
+    } catch (err) {
+      console.error('Error scheduling email:', err);
+      alert('Failed to schedule email. Please try again.');
+    } finally {
+      setIsSubmittingSchedule(false);
+    }
+  };
+
+  const handleProcessScheduledEmails = async () => {
+    try {
+      setIsProcessingScheduled(true);
+      
+      const response = await fetch('/api/grocery-list/process-scheduled', {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to process scheduled emails');
+      }
+
+      const data = await response.json();
+      
+      if (data.results && data.results.length > 0) {
+        alert(`Processed ${data.results.length} scheduled emails. Check your email!`);
+      } else {
+        alert('No scheduled emails were due to be sent.');
+      }
+      
+      // Refresh the page to update the scheduled emails list
+      fetchScheduledEmails();
+    } catch (err) {
+      console.error('Error processing scheduled emails:', err);
+      alert('Failed to process scheduled emails. Please try again.');
+    } finally {
+      setIsProcessingScheduled(false);
+    }
+  };
+
   const handleProcessIngredients = async () => {
     try {
       setIsProcessingIngredients(true);
@@ -143,6 +240,24 @@ export default function GroceryListPage() {
     }
   };
 
+  const handleCancelScheduledEmail = async (emailId: string) => {
+    try {
+      const response = await fetch(`/api/grocery-list/schedule/${emailId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to cancel scheduled email');
+      }
+
+      alert('Scheduled email cancelled successfully');
+      fetchScheduledEmails(); // Refresh the list
+    } catch (err) {
+      console.error('Error cancelling scheduled email:', err);
+      alert('Failed to cancel scheduled email. Please try again.');
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -158,6 +273,11 @@ export default function GroceryListPage() {
       </div>
     );
   }
+
+  // Get tomorrow's date for the min date attribute
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowFormatted = tomorrow.toISOString().split('T')[0];
 
   return (
     <PageBackground image="/recipe.jpg">
@@ -195,14 +315,106 @@ export default function GroceryListPage() {
               >
                 Save List
               </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsScheduling(true)}
+                  disabled={!items.trim()}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
+                >
+                  Schedule Email
+                </button>
+                <button
+                  onClick={handleSendList}
+                  disabled={isSending || !items.trim()}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                >
+                  {isSending ? 'Sending...' : 'Send to Email'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Schedule Email Modal */}
+          {isScheduling && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 max-w-md w-full">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">Schedule Email</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Date (EST)</label>
+                    <input
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      min={tomorrowFormatted}
+                      className="w-full p-2 rounded-md border border-gray-300 bg-white text-gray-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Time (EST)</label>
+                    <input
+                      type="time"
+                      value={scheduledTime}
+                      onChange={(e) => setScheduledTime(e.target.value)}
+                      className="w-full p-2 rounded-md border border-gray-300 bg-white text-gray-900"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 mt-6">
+                    <button
+                      onClick={() => setIsScheduling(false)}
+                      className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleScheduleEmail}
+                      disabled={isSubmittingSchedule || !scheduledDate || !scheduledTime}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
+                    >
+                      {isSubmittingSchedule ? 'Scheduling...' : 'Schedule'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Scheduled Emails Section */}
+          <div className="mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <h2 className="text-lg font-semibold text-gray-900">Scheduled Emails</h2>
               <button
-                onClick={handleSendList}
-                disabled={isSending || !items.trim()}
-                className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                onClick={handleProcessScheduledEmails}
+                disabled={isProcessingScheduled}
+                className="px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
               >
-                {isSending ? 'Sending...' : 'Send to Email'}
+                {isProcessingScheduled ? 'Processing...' : 'Check & Send Due Emails'}
               </button>
             </div>
+            {isLoadingScheduled ? (
+              <div className="text-gray-600">Loading scheduled emails...</div>
+            ) : scheduledEmails.length > 0 ? (
+              <div className="space-y-2">
+                {scheduledEmails.map((email) => (
+                  <div key={email.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
+                    <div>
+                      <div className="font-medium text-gray-900">
+                        Scheduled for: {new Date(email.scheduledFor).toLocaleString('en-US', { timeZone: 'America/New_York' })}
+                      </div>
+                      <div className="text-sm text-gray-600">Status: {email.status}</div>
+                    </div>
+                    <button
+                      onClick={() => handleCancelScheduledEmail(email.id)}
+                      className="px-3 py-1 bg-red-600 text-white text-sm rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-gray-600">No scheduled emails</div>
+            )}
           </div>
 
           {/* Add Item Section */}
